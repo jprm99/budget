@@ -156,6 +156,14 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <textarea id="dataBox" rows="3" placeholder="If downloads are unavailable, the export appears here. Paste an export here to import it."></textarea>
   <div class="row" style="margin-top:8px"><button id="impPaste">Import pasted text</button></div>
   <p class="hint" id="dataMsg"></p>
+  <h2 style="margin-top:14px">Sync with GitHub</h2>
+  <p class="hint" id="ghInfo">Keeps your data in a private GitHub repository, so your phone and computer share the same budget.</p>
+  <div id="ghForm" class="form">
+    <input id="ghRepo" class="full" placeholder="your-username/budget-data" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <input id="ghTok" class="full" type="password" placeholder="Access token" autocomplete="off">
+    <button class="primary full" id="ghGo">Connect</button>
+  </div>
+  <div id="ghOn" class="row" style="flex-wrap:wrap" hidden><span id="ghRepoTxt" class="hint" style="flex-basis:100%"></span><button id="ghNow">Sync now</button><button id="ghOff">Disconnect this device</button></div>
   <h2 style="margin-top:14px">Clean up</h2>
   <div class="row" style="flex-wrap:wrap">Delete everything older than <input id="pN" type="number" min="1" value="12" style="width:72px"> months <button id="pGo">Delete old data</button></div>
   <p class="hint" id="pInfo" style="color:var(--ink)"></p>
@@ -167,7 +175,7 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 
 <script>
 (function(){
-var VERSION="1.0",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
+var VERSION="1.1",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
 var S=load(),cur=ym(new Date());
 function mainId(d){return d.accounts.some(function(a){return a.id==="main"})?"main":d.accounts[0].id}
 function resolveIn(d,id){return d.accounts.some(function(a){return a.id===id})?id:mainId(d)}
@@ -189,7 +197,7 @@ function norm(d){var fresh=!(d&&d.expenses&&d.recurring);if(fresh)d={income:{},e
   d.accounts.forEach(function(a){delete a.bal;delete a.pct});
   d.updated=d.updated||0;return d}
 function load(){try{return norm(JSON.parse(localStorage.getItem(KEY)))}catch(e){return norm(null)}}
-function save(){S.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){$("warn").textContent="Your browser is blocking local storage on this device."}push()}
+function save(){S.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){$("warn").textContent="Your browser is blocking local storage on this device."}push();ghQueue()}
 function ym(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}
 function idx(m){var p=m.split("-");return +p[0]*12+ +p[1]-1}
 function shift(m,n){var i=idx(m)+n;return Math.floor(i/12)+"-"+String(i%12+1).padStart(2,"0")}
@@ -396,6 +404,66 @@ $("pGo").onclick=function(){
     S.recurring=S.recurring.filter(function(q){var last=q.stop?shift(q.stop,-1):(q.months?shift(q.start,q.months-1):null);return !last||idx(last)>=idx(c)});
     save();render();$("pGo").textContent="Delete old data";$("pInfo").textContent="Removed "+info.n+" old entries. Account balances were carried forward."})};
 
+var GH_KEY="budget-gh",gh=null,ghSha=null,ghBusy=false,ghAgain=false,ghTimer=null;
+try{gh=JSON.parse(localStorage.getItem(GH_KEY))}catch(e){gh=null}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function hasData(){return S.expenses.length>0||S.recurring.length>0||Object.keys(S.income).length>0||S.adj.length>0||S.xfers.length>0}
+function adopt(d){S=norm(d);S.updated=d.updated||0;saveLocal();aSig="";render()}
+function b64e(t){return btoa(unescape(encodeURIComponent(t)))}
+function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,""))))}
+function ghUrl(p){return"https://api.github.com/repos/"+gh.repo+(p||"")}
+function ghFetch(url,opt){opt=opt||{};opt.cache="no-store";opt.headers=Object.assign({"Authorization":"Bearer "+gh.token,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"},opt.headers||{});return fetch(url,opt)}
+function ghMsg(e){var c=e&&e.code;
+  if(c===401)return"GitHub refused the token (wrong or expired). Create a new one and connect again.";
+  if(c===403)return"GitHub denied access. The token needs “Contents: Read and write” on the data repository.";
+  if(c===404)return"Repository not found. Check its name and that the token has access to it.";
+  if(e instanceof SyntaxError)return"The data file on GitHub could not be read.";
+  if(c)return"GitHub returned an error ("+c+"). Your data is safe on this device.";
+  return"Can’t reach GitHub. Your data is safe on this device and will sync when you’re back online."}
+async function ghGet(){
+  var res=await ghFetch(ghUrl("/contents/budget.json"));
+  if(res.status===404){var chk=await ghFetch(ghUrl());if(chk.status===404)throw{code:404};if(!chk.ok)throw{code:chk.status};return{none:true}}
+  if(!res.ok)throw{code:res.status};
+  var j=await res.json();return{sha:j.sha,data:JSON.parse(b64d(j.content))}}
+async function ghPut(sha){
+  var body={message:"Budget update "+new Date().toISOString(),content:b64e(JSON.stringify(S))};if(sha)body.sha=sha;
+  var res=await ghFetch(ghUrl("/contents/budget.json"),{method:"PUT",body:JSON.stringify(body)});
+  if(!res.ok)throw{code:res.status};var j=await res.json();ghSha=j.content.sha}
+function ghDone(){status("Synced with GitHub at "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+".")}
+async function ghSync(){
+  if(!gh)return;if(ghBusy){ghAgain=true;return}
+  ghBusy=true;ghAgain=false;status("Syncing with GitHub…");
+  try{
+    for(var n=0;n<2;n++){
+      var r=await ghGet(),ru=r.none?-1:(r.data.updated||0);
+      if(r.none||ru<(S.updated||0)){try{await ghPut(r.none?null:r.sha)}catch(e){if((e.code===409||e.code===422)&&n===0)continue;throw e}}
+      else if(ru>(S.updated||0)){adopt(r.data);ghSha=r.sha}
+      else ghSha=r.sha;
+      break}
+    ghDone()
+  }catch(e){status(ghMsg(e))}
+  ghBusy=false;if(ghAgain)ghSync()}
+function ghQueue(){if(!gh)return;clearTimeout(ghTimer);ghTimer=setTimeout(ghSync,1500)}
+function ghUI(){$("ghForm").hidden=!!gh;$("ghOn").hidden=!gh;if(gh)$("ghRepoTxt").textContent="Connected to "+gh.repo+". Changes are saved automatically."}
+$("ghGo").onclick=async function(){
+  var repo=$("ghRepo").value.trim().replace(/^https?:\/\/github\.com\//,"").replace(/\.git$/,"").replace(/\/+$/,""),tok=$("ghTok").value.trim();
+  if(!/^[\w.-]+\/[\w.-]+$/.test(repo)||!tok){status("Enter the repository as your-username/budget-data and paste your token.");return}
+  var prev=gh;gh={repo:repo,token:tok};status("Connecting…");
+  try{
+    var r=await ghGet();
+    if(r.none){await ghPut(null)}
+    else if(!hasData()){adopt(r.data);ghSha=r.sha}
+    else if((r.data.updated||0)!==(S.updated||0)){
+      if(confirm("GitHub already holds a saved budget (last changed "+new Date(r.data.updated||0).toLocaleString()+").\n\nOK = use GitHub’s version on this device.\nCancel = replace GitHub’s version with the data on this device.")){adopt(r.data);ghSha=r.sha}
+      else{S.updated=Date.now();saveLocal();await ghPut(r.sha)}}
+    else ghSha=r.sha;
+    try{localStorage.setItem(GH_KEY,JSON.stringify(gh))}catch(e){}
+    $("ghTok").value="";ghUI();ghDone()
+  }catch(e){gh=prev;status(ghMsg(e))}};
+$("ghNow").onclick=function(){ghSync()};
+$("ghOff").onclick=function(){twice(this,"ghoff",function(){gh=null;clearTimeout(ghTimer);try{localStorage.removeItem(GH_KEY)}catch(e){}ghUI();$("ghOff").textContent="Disconnect this device";status("Disconnected. Your data stays on this device.")})};
+document.addEventListener("visibilitychange",function(){if(!document.hidden&&gh)ghSync()});
+
 function status(t){$("sync").textContent=t}
 function push(){if(!ref)return;clearTimeout(timer);timer=setTimeout(function(){ref.set({json:JSON.stringify(S),updated:S.updated}).then(function(){status("Synced to your claude.ai account.")},function(){status("Sync failed. Data is kept on this device.")})},700)}
 (async function(){
@@ -410,7 +478,7 @@ function push(){if(!ref)return;clearTimeout(timer);timer=setTimeout(function(){r
   }catch(e){status("Stored on this device only.")}
 })();
 $("ver").textContent=VERSION;
-render();
+render();ghUI();if(gh)ghSync();
 })();
 </script>
 </body>
