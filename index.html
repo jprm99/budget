@@ -17,8 +17,17 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 "DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
-main{max-width:720px;margin:0 auto;padding:16px 16px 48px}
-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+main{max-width:720px;margin:0 auto;padding:0 16px 104px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--bg);padding:12px 0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:16;background:var(--bg)}
+.view[hidden]{display:none}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.quick button{padding:12px}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs div{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 7px;font-size:11px;color:var(--mute);text-decoration:none;-webkit-tap-highlight-color:transparent}
+.tabs a[aria-current="page"]{color:var(--acc);font-weight:700}
+.tabs a:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.tabs svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 h1{font-size:20px;margin:0;text-transform:capitalize}
 h2{font-size:16px;margin:0 0 10px}
 .nav{flex:none}.nav button{height:38px;min-width:38px;font-size:18px;padding:0 10px}
@@ -93,12 +102,9 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <div class="nav row"><button id="prev" aria-label="Previous month">‹</button><button id="today">Today</button><button id="next" aria-label="Next month">›</button></div>
 </header>
 
-<section class="card">
-  <h2>Money received this month</h2>
-  <div class="income"><input id="income" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00"><span id="incHint" class="hint"></span></div>
-  <p class="hint" style="margin:8px 0 0">This money is added to your Main account.</p>
-</section>
 
+<div class="view" data-view="home">
+<div class="quick"><button class="primary" data-go="spending" data-focus="eLabel">Add an expense</button><button data-go="savings" data-focus="sAmt">Add savings</button></div>
 <section class="card hero">
   <div class="lbl" id="heroLbl"></div>
   <div class="big" id="heroVal"></div>
@@ -112,7 +118,6 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   </div>
   <div class="hint notes" id="heroNotes"></div>
 </section>
-
 <section class="card">
   <h2>Daily spending allowance</h2>
   <div class="lbl" id="dLbl"></div>
@@ -123,7 +128,14 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <ul class="calc" id="dCalc"></ul>
   <div class="hint notes" id="dWarn"></div>
 </section>
+<section class="card">
+  <h2>Money received this month</h2>
+  <div class="income"><input id="income" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00"><span id="incHint" class="hint"></span></div>
+  <p class="hint" style="margin:8px 0 0">This money is added to your Main account.</p>
+</section>
+</div>
 
+<div class="view" data-view="spending">
 <section class="card">
   <h2 id="eTitle">One-off expenses</h2>
   <div class="form">
@@ -136,7 +148,39 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   </div>
   <ul id="eList"></ul>
 </section>
+<section class="card">
+  <div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Budgets by category</h2><button class="ghost" id="bEdit">Set budgets</button></div>
+  <div id="bList"></div>
+  <p class="hint" id="bHint"></p>
+</section>
+<section class="card">
+  <h2>Spending by category</h2>
+  <select id="dAcc" aria-label="Account to show" style="margin-bottom:12px"></select>
+  <div id="dChart"></div>
+</section>
+</div>
 
+<div class="view" data-view="bills">
+<section class="card">
+  <h2 id="rTitle">Recurring expenses</h2>
+  <div class="form r3">
+    <input id="rLabel" placeholder="Name (rent, gym, car insurance…)" style="grid-column:1/-1">
+    <input id="rAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount">
+    <select id="rCat" aria-label="Category"></select>
+    <input id="rDay" type="number" inputmode="numeric" min="1" max="31" step="1" placeholder="Day of month (1–31)">
+    <select id="rEvery" aria-label="How often">
+      <option value="1">Every month</option><option value="2">Every 2 months</option><option value="3">Every 3 months</option><option value="6">Every 6 months</option><option value="12">Every year</option>
+    </select>
+    <input id="rDur" type="number" inputmode="numeric" min="1" step="1" placeholder="Payments (empty = ongoing)" style="grid-column:span 2">
+    <select id="rAcc" style="grid-column:1/-1" aria-label="Account the expense is taken from"></select>
+    <div class="row" style="grid-column:1/-1"><button class="primary grow" id="rAdd">Add recurring expense, starting this month</button><button id="rCancel" hidden>Cancel</button></div>
+  </div>
+  <p class="hint" style="margin-top:0">For bills that don’t come every month (insurance, taxes), the daily allowance sets aside a monthly share so the big month doesn’t catch you out. Changes apply to every month the expense covers.</p>
+  <ul id="rList"></ul>
+</section>
+</div>
+
+<div class="view" data-view="savings">
 <section class="card">
   <h2>Savings goals</h2>
   <div class="rule"><label for="ruleX">I only buy something once I’ve saved</label><input id="ruleX" type="number" inputmode="decimal" min="1" step="0.5"><span>× its price</span></div>
@@ -166,37 +210,9 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   </div>
   <p class="hint">The deadline is optional. With one, the goal’s monthly amount comes out of your daily allowance. When you buy it, the purchase is paid from the goal and doesn’t count as day-to-day spending; whatever is left over becomes free money in the account.</p>
 </section>
+</div>
 
-<section class="card">
-  <div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Budgets by category</h2><button class="ghost" id="bEdit">Set budgets</button></div>
-  <div id="bList"></div>
-  <p class="hint" id="bHint"></p>
-</section>
-
-<section class="card">
-  <h2>Spending by category</h2>
-  <select id="dAcc" aria-label="Account to show" style="margin-bottom:12px"></select>
-  <div id="dChart"></div>
-</section>
-
-<section class="card">
-  <h2 id="rTitle">Recurring expenses</h2>
-  <div class="form r3">
-    <input id="rLabel" placeholder="Name (rent, gym, car insurance…)" style="grid-column:1/-1">
-    <input id="rAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount">
-    <select id="rCat" aria-label="Category"></select>
-    <input id="rDay" type="number" inputmode="numeric" min="1" max="31" step="1" placeholder="Day of month (1–31)">
-    <select id="rEvery" aria-label="How often">
-      <option value="1">Every month</option><option value="2">Every 2 months</option><option value="3">Every 3 months</option><option value="6">Every 6 months</option><option value="12">Every year</option>
-    </select>
-    <input id="rDur" type="number" inputmode="numeric" min="1" step="1" placeholder="Payments (empty = ongoing)" style="grid-column:span 2">
-    <select id="rAcc" style="grid-column:1/-1" aria-label="Account the expense is taken from"></select>
-    <div class="row" style="grid-column:1/-1"><button class="primary grow" id="rAdd">Add recurring expense, starting this month</button><button id="rCancel" hidden>Cancel</button></div>
-  </div>
-  <p class="hint" style="margin-top:0">For bills that don’t come every month (insurance, taxes), the daily allowance sets aside a monthly share so the big month doesn’t catch you out. Changes apply to every month the expense covers.</p>
-  <ul id="rList"></ul>
-</section>
-
+<div class="view" data-view="accounts">
 <section class="card">
   <h2 id="aTitle">Accounts</h2>
   <ul id="aList"></ul>
@@ -210,20 +226,21 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <h2 style="margin-top:14px">Add an account (PEA…)</h2>
   <div class="form"><input id="aName" placeholder="Account name"><input id="aBal" type="number" inputmode="decimal" step="0.01" placeholder="Current balance"><button class="primary full" id="aAdd">Add account</button></div>
 </section>
+</div>
 
+<div class="view" data-view="more">
 <section class="card">
   <h2>Expense categories</h2>
   <ul id="cList"></ul>
   <div class="form" style="margin-top:10px"><input id="cNew" placeholder="New category (Pets, Gifts, Taxes…)"><button class="primary" id="cAdd">Add</button></div>
   <p class="hint">Add categories whenever you need them. Renaming updates past expenses. Deleting a category moves its expenses to “Other”.</p>
 </section>
-
 <section class="card">
   <h2>Backup, sync and clean-up</h2>
   <p class="hint" id="sync">Checking sync…</p>
   <div class="row" style="flex-wrap:wrap;margin-bottom:10px">
     <button id="xJson">Export JSON (backup)</button><button id="xCsv">Export CSV (spreadsheet)</button>
-    <label class="filebtn">Import JSON (replaces data)<input id="impFile" type="file" accept=".json,application/json" hidden></label>
+    <label class="filebtn">Import JSON (replaces data everywhere)<input id="impFile" type="file" accept=".json,application/json" hidden></label>
   </div>
   <textarea id="dataBox" rows="3" placeholder="If downloads are unavailable, the export appears here. Paste an export here to import it."></textarea>
   <div class="row" style="margin-top:8px"><button id="impPaste">Import pasted text</button></div>
@@ -241,13 +258,17 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <p class="hint" id="pInfo" style="color:var(--ink)"></p>
   <p class="hint">Keeps current and future months, ongoing recurring expenses, goals and what you’ve saved for each. Account balances stay the same: older movements are folded into a carried-forward balance.</p>
 </section>
+
 <p class="hint" id="warn"></p>
 <p class="hint">Budget app, version <span id="ver"></span></p>
+
+</div>
 </main>
+<nav class="tabs" aria-label="Sections"><div><a href="#home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Home</a><a href="#spending"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h12l2-8H6"/></svg>Spending</a><a href="#bills"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Bills</a><a href="#savings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Savings</a><a href="#accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M16 15h2"/></svg>Accounts</a><a href="#more"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>More</a></div></nav>
 
 <script>
 (function(){
-var VERSION="2.1",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
+var VERSION="2.2",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
 var ARR=["expenses","recurring","xfers","adj","goals","accounts","alloc"],MAPS=["income","budgets","paid","settings"];
 var FREQ={1:"every month",2:"every 2 months",3:"every 3 months",6:"every 6 months",12:"every year"};
 var fmt=new Intl.NumberFormat("en-GB",{style:"currency",currency:"EUR"});
@@ -348,6 +369,8 @@ function adopt(d){S=d;saveLocal();aSig="";budSig="";render()}
 /* Bring a remote copy in. Returns the normalised remote and whether this device changed. */
 function reconcile(raw){
   var rem=norm(raw);
+  /* A new import starts a new "epoch": the newer copy wins outright instead of being merged. */
+  if((rem.epoch||"")!==(S.epoch||"")){if((rem.updated||0)>(S.updated||0)){adopt(clone(rem));return{remote:rem,changed:true}}return{remote:rem,changed:false}}
   if(canon(rem)===canon(S)){if((rem.updated||0)>(S.updated||0)){S.updated=rem.updated;saveLocal()}return{remote:rem,changed:false}}
   if(!hasData()){adopt(clone(rem));return{remote:rem,changed:true}}
   var m=merge(S,rem);
@@ -429,7 +452,7 @@ function renderHero(p){
   else{$("sDueL").textContent="Bills this month ("+p.recs.length+")";$("sDue").textContent=eur(p.bills)}
   var notes=[];
   if(st==="now"&&tDay()>=5&&p.spent>0){var pace=p.spent/tDay()*dim(cur);notes.push("At your current pace, day-to-day spending would reach about "+eur(pace)+", leaving "+eur(p.inc-p.bills-pace)+".")}
-  if(!hasBud&&st!=="past")notes.push("Set budgets by category below so this forecast also counts the spending still to come.");
+  if(!hasBud&&st!=="past")notes.push("Set budgets by category in Spending so this forecast also counts the spending still to come.");
   p.big.forEach(function(r){notes.push("Includes "+esc(r.label)+" ("+eur(r.amt)+", "+freq(r)+"). Use the money set aside for it in earlier months.")});
   if(p.fromGoals.length)notes.push(eur(sum(p.fromGoals,function(e){return e.amt}))+" paid from savings goals ("+p.fromGoals.map(function(e){return esc(e.label)}).join(", ")+") isn’t counted here: it came from money you’d already saved.");
   if(!ledger)notes.push("Account balances are tracked from "+lbl(S.since)+".");
@@ -473,7 +496,7 @@ function renderDaily(p){
   $("dBar").style.width=Math.min(100,Math.max(0,pc))+"%";$("dBar").className="fill"+(pc>100?" over":"");
   var w=[];
   if(p.budTot>p.allowed+0.004&&p.allowed>=0&&st!=="past")w.push('<span class="neg">Your category budgets add up to '+eur(p.budTot)+', more than the '+eur(p.allowed)+' available. Lower some budgets to stay on track for your goals.</span>');
-  if(!hasGoals)w.push("Add a savings goal below and this allowance will show what you can spend each day while still reaching it.");
+  if(!hasGoals)w.push("Add a savings goal with a deadline in Savings and this allowance will show what you can spend each day while still reaching it.");
   $("dWarn").innerHTML=w.map(function(n){return"<p>"+n+"</p>"}).join("");
 }
 
@@ -777,7 +800,7 @@ function csv(){
   return rows.map(function(r){return r.map(function(c,i){c=String(c);if(i===5&&c!=="Amount")c=c.replace(".",",");return/[";\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(";")}).join("\n")}
 $("xJson").onclick=function(){dl("budget-"+stamp()+".json",JSON.stringify(S,null,1))};
 $("xCsv").onclick=function(){dl("budget-"+stamp()+".csv",csv())};
-function imp(text){try{var d=JSON.parse(text);if(!d||!d.expenses||!d.recurring)throw 0;S=norm(d);aSig="";budSig="";save();render();msg("Data imported.")}catch(e){msg("That doesn’t look like a budget export.")}}
+function imp(text){try{var d=JSON.parse(text);if(!d||!d.expenses||!d.recurring)throw 0;S=norm(d);S.epoch=uid();aSig="";budSig="";splitSig="";save();render();msg("Data imported. Your synced copies will be replaced with it.")}catch(e){msg("That doesn’t look like a budget export.")}}
 $("impFile").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){imp(r.result)};r.readAsText(f);this.value=""};
 $("impPaste").onclick=function(){imp($("dataBox").value)};
 
@@ -885,6 +908,14 @@ async function dbPull(){
 document.addEventListener("visibilitychange",function(){if(document.hidden)return;if(gh)ghSync();if(ref)dbPull().catch(function(){});render()});
 
 function defCat(){var c=S.cats.indexOf("Leisure")>=0?"Leisure":"Other";if(S.cats.indexOf(c)>=0)$("gCat").value=c}
+var VIEWS=["home","spending","bills","savings","accounts","more"];
+function showView(){var v=location.hash.slice(1);if(VIEWS.indexOf(v)<0)v="home";
+  [].forEach.call(document.querySelectorAll(".view"),function(el){el.hidden=el.getAttribute("data-view")!==v});
+  [].forEach.call(document.querySelectorAll(".tabs a"),function(a){if(a.getAttribute("href")==="#"+v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")})}
+window.addEventListener("hashchange",function(){showView();window.scrollTo(0,0)});
+document.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest("[data-go]");if(!t)return;var f=t.getAttribute("data-focus");location.hash=t.getAttribute("data-go");showView();window.scrollTo(0,0);if(f)setTimeout(function(){$(f).focus()},50)});
+/* Edit buttons fill a form that is always in the same view, so no switch is needed. */
+showView();
 $("ver").textContent=VERSION;
 render();defCat();ghUI();if(gh)ghSync();
 })();
