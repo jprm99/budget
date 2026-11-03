@@ -268,7 +268,7 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 
 <script>
 (function(){
-var VERSION="2.2",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
+var VERSION="2.3",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
 var ARR=["expenses","recurring","xfers","adj","goals","accounts","alloc"],MAPS=["income","budgets","paid","settings"];
 var FREQ={1:"every month",2:"every 2 months",3:"every 3 months",6:"every 6 months",12:"every year"};
 var fmt=new Intl.NumberFormat("en-GB",{style:"currency",currency:"EUR"});
@@ -322,7 +322,7 @@ function bal(d,id,upTo){var p=parts(d,id,upTo);return rd(p.inc-p.exp+p.xin-p.xou
 /* ---------- storage ---------- */
 function norm(d){var fresh=!(d&&d.expenses&&d.recurring);if(fresh)d={income:{},expenses:[],recurring:[]};
   if(!d.income)d.income={};if(!d.cats||!d.cats.length)d.cats=CATS.slice();
-  if(!d.accounts||!d.accounts.length)d.accounts=[{id:"main",name:"Main account"},{id:"spend",name:"Spending account"},{id:"livret",name:"Livret A"}];
+  if(!d.accounts||!d.accounts.length)d.accounts=[{id:"main",name:"Main account"},{id:"livret",name:"Livret A"},{id:"bourso",name:"Boursorama"}];
   if(!d.adj)d.adj=[];if(!d.xfers)d.xfers=[];
   if(!d.budgets)d.budgets={};if(!d.paid)d.paid={};if(!d.goals)d.goals=[];if(!d.del)d.del={};if(!d.ts)d.ts={};
   d.recurring.forEach(function(r){r.every=+r.every||1;r.day=+r.day||1});
@@ -832,8 +832,9 @@ try{gh=JSON.parse(localStorage.getItem(GH_KEY))}catch(e){gh=null}
 function b64e(t){return btoa(unescape(encodeURIComponent(t)))}
 function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,""))))}
 function ghUrl(p){return"https://api.github.com/repos/"+gh.repo+(p||"")}
-function ghFetch(url,opt){opt=opt||{};opt.cache="no-store";opt.headers=Object.assign({"Authorization":"Bearer "+gh.token,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"},opt.headers||{});return fetch(url,opt)}
+function ghFetch(url,opt){if(!gh)return Promise.reject({code:"off"});opt=opt||{};opt.cache="no-store";opt.headers=Object.assign({"Authorization":"Bearer "+gh.token,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"},opt.headers||{});return fetch(url,opt)}
 function ghMsg(e){var c=e&&e.code;
+  if(c==="off")return"Disconnected. Your data stays on this device.";
   if(c===401)return"GitHub refused the token (wrong or expired). Create a new one and connect again.";
   if(c===403)return"GitHub denied access. The token needs “Contents: Read and write” on the data repository.";
   if(c===404)return"Repository not found. Check its name and that the token has access to it.";
@@ -849,7 +850,7 @@ async function ghPut(sha){
   var body={message:"Budget update "+new Date().toISOString(),content:b64e(JSON.stringify(S))};if(sha)body.sha=sha;
   var res=await ghFetch(ghUrl("/contents/budget.json"),{method:"PUT",body:JSON.stringify(body)});
   if(!res.ok)throw{code:res.status};var j=await res.json();ghSha=j.content.sha}
-function ghDone(){status("Synced with GitHub at "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+".")}
+function ghDone(){if(!gh){status("Disconnected. Your data stays on this device.");return}status("Synced with GitHub at "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+".")}
 async function ghSync(){
   if(!gh)return;if(ghBusy){ghAgain=true;return}
   ghBusy=true;ghAgain=false;status("Syncing with GitHub…");
@@ -872,12 +873,14 @@ $("ghGo").onclick=async function(){
   var prev=gh;gh={repo:repo,token:tok};status("Connecting…");
   try{
     var r=await ghGet();
+    var rem=r.none?null:norm(r.data);
     if(r.none){await ghPut(null)}
-    else if(!hasData()){adopt(norm(r.data));ghSha=r.sha}
-    else if((r.data.updated||0)!==(S.updated||0)){
-      if(confirm("GitHub already holds a saved budget (last changed "+new Date(r.data.updated||0).toLocaleString()+").\n\nOK = use GitHub’s version on this device.\nCancel = replace GitHub’s version with the data on this device.")){adopt(norm(r.data));ghSha=r.sha}
+    else if(canon(rem)===canon(S)){ghSha=r.sha}
+    else if(S.epoch&&S.epoch!==(rem.epoch||"")&&(S.updated||0)>(rem.updated||0)){await ghPut(r.sha)}
+    else if(!hasData()&&!S.epoch){adopt(rem);ghSha=r.sha}
+    else{
+      if(confirm("GitHub already holds a saved budget (last changed "+new Date(r.data.updated||0).toLocaleString()+").\n\nOK = use GitHub’s version on this device.\nCancel = replace GitHub’s version with the data on this device.")){adopt(rem);ghSha=r.sha}
       else{S.updated=Date.now();saveLocal();await ghPut(r.sha)}}
-    else ghSha=r.sha;
     try{localStorage.setItem(GH_KEY,JSON.stringify(gh))}catch(e){}
     $("ghTok").value="";ghUI();ghDone()
   }catch(e){gh=prev;status(ghMsg(e))}};
