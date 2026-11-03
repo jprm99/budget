@@ -27,20 +27,25 @@ button,input,select{font:inherit;color:inherit}
 button{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
 button.primary{background:var(--acc);color:var(--acc-ink);border-color:var(--acc);font-weight:500}
 button.ghost{border:0;background:none;color:var(--mute);padding:4px 8px}
+button.sm{padding:6px 10px;font-size:14px}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 input,select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0;width:100%}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
 .hero{padding:20px 16px}
-.hero .big{font-size:44px;font-weight:700;line-height:1.1;letter-spacing:-.02em}
-.hero .lbl{color:var(--mute)}
+.big{font-size:44px;font-weight:700;line-height:1.1;letter-spacing:-.02em}
+.big2{font-size:34px;font-weight:700;line-height:1.15;letter-spacing:-.01em}
+.lbl{color:var(--mute)}
 .pos{color:var(--ok)}.neg{color:var(--bad)}
 .track{height:10px;background:var(--track);border-radius:6px;overflow:hidden;margin:14px 0 6px}
 .fill{height:100%;background:var(--bar);border-radius:6px}
+.fill.over{background:var(--bad)}.fill.soft{background:var(--mute);opacity:.45}
 .row{display:flex;gap:8px;align-items:center}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px;margin-top:12px}
+.grow{flex:1}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:12px}
 .stats div{font-size:13px;color:var(--mute)}.stats b{display:block;font-size:16px;color:var(--ink)}
 .income{display:flex;align-items:center;gap:10px}.income input{max-width:160px;font-size:18px;font-weight:500}
 .hint{color:var(--mute);font-size:13px}
+.notes p{margin:8px 0 0}
 .form{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:12px}
 .form .full{grid-column:1/-1}
 .form.r3{grid-template-columns:1fr 1fr 1fr}
@@ -48,14 +53,31 @@ ul{list-style:none;margin:0;padding:0}
 li{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
 li .t{flex:1;min-width:0}li .t span{display:block;color:var(--mute);font-size:13px}
 li .a{font-weight:500;white-space:nowrap}
-.cat{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;padding:4px 0;font-size:14px}
-.cat .track{margin:0;height:8px}
+li.blk{display:block}
+.acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;flex-basis:100%;margin-top:-4px}
+.calc{margin-top:12px}
+.calc li{padding:5px 0;font-size:14px}.calc li .t{color:var(--mute)}
+.calc li.tot{font-weight:700}.calc li.tot .t{color:var(--ink)}
 .empty{color:var(--mute);padding:6px 0}
 .tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-left:6px;color:var(--mute)}
-@media (max-width:480px){.hero .big{font-size:38px}.form.r3{grid-template-columns:1fr 1fr}}
+button.tagb{font-size:12px;padding:1px 8px;border-radius:6px;margin-left:6px;color:var(--mute)}
+button.tagb.ok{color:var(--ok);border-color:var(--ok)}
+.chk{display:flex;align-items:center;gap:6px;white-space:nowrap;color:var(--mute);font-size:14px}.chk input{width:auto}
+.bud{padding:8px 0;border-top:1px solid var(--line)}.bud:first-child{border-top:0}
+.bh{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.bud .track{margin:6px 0 2px;height:8px}
+.bud input{margin-top:6px;max-width:170px}
+.goal .track{margin:8px 0 4px;height:8px}
+.track{position:relative}.mark{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.55}
+.split li{padding:6px 0}.split input{width:110px;flex:none}
+.rule{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-size:14px}.rule input{width:72px}
+.asum{font-size:13px;color:var(--mute);padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px}.asum b{color:var(--ink);font-weight:500}
+.tb{display:flex;gap:6px;margin-top:6px}.tb input{max-width:140px}
+.goal .gl{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--mute)}
+@media (max-width:480px){.big{font-size:38px}.big2{font-size:30px}.form.r3{grid-template-columns:1fr 1fr}}
 textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;color:inherit}
 .filebtn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
-li input.num{width:120px;flex:none}li input.pct{width:64px;flex:none}
+li input.num{width:120px;flex:none}
 .donut{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .donut .leg{flex:1;min-width:180px}
 .donut li{padding:6px 0;gap:8px}
@@ -84,15 +106,71 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <div class="track"><div class="fill" id="bar"></div></div>
   <div class="hint" id="barTxt"></div>
   <div class="stats">
-    <div>Recurring<b id="sRec"></b></div>
-    <div>One-off<b id="sOne"></b></div>
-    <div>Spent in total<b id="sTot"></b></div>
+    <div><span>Main account at month end</span><b id="sMain"></b></div>
+    <div><span>All accounts at month end</span><b id="sAll"></b></div>
+    <div><span id="sDueL">Bills still to pay</span><b id="sDue"></b></div>
   </div>
+  <div class="hint notes" id="heroNotes"></div>
 </section>
 
 <section class="card">
-  <h2>Where it goes</h2>
-  <div id="cats"></div>
+  <h2>Daily spending allowance</h2>
+  <div class="lbl" id="dLbl"></div>
+  <div class="big2" id="dVal"></div>
+  <div class="hint" id="dSub"></div>
+  <div class="track" id="dTrack"><div class="fill" id="dBar"></div></div>
+  <div class="hint" id="dBarTxt"></div>
+  <ul class="calc" id="dCalc"></ul>
+  <div class="hint notes" id="dWarn"></div>
+</section>
+
+<section class="card">
+  <h2 id="eTitle">One-off expenses</h2>
+  <div class="form">
+    <input id="eLabel" placeholder="What was it?">
+    <input id="eAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount">
+    <select id="eCat" aria-label="Category"></select>
+    <input id="eDate" type="date" aria-label="Date">
+    <select id="eAcc" class="full" aria-label="Account the expense is taken from"></select>
+    <div class="row full"><label class="chk"><input type="checkbox" id="eRef"> Refund</label><button class="primary grow" id="eAdd">Add expense</button><button id="eCancel" hidden>Cancel</button></div>
+  </div>
+  <ul id="eList"></ul>
+</section>
+
+<section class="card">
+  <h2>Savings goals</h2>
+  <div class="rule"><label for="ruleX">I only buy something once I’ve saved</label><input id="ruleX" type="number" inputmode="decimal" min="1" step="0.5"><span>× its price</span></div>
+  <div id="gAccts"></div>
+  <ul id="gList"></ul>
+  <h2 style="margin-top:16px">Add savings</h2>
+  <p class="hint" style="margin-top:0">Share money out between your goals. Each goal keeps its own part, even when they all sit in the same account.</p>
+  <div class="form">
+    <input id="sAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount to share">
+    <button id="sEven">Split evenly</button>
+    <ul id="sSplit" class="full split"></ul>
+    <button id="sNeed" class="full">Use each goal’s amount for this month</button>
+    <select id="sFrom" class="full" aria-label="Where the money comes from"></select>
+    <button class="primary full" id="sGo">Add to goals</button>
+  </div>
+  <p class="hint" id="sMsg" style="color:var(--ink)"></p>
+  <ul id="gDone"></ul>
+  <h2 id="gFormT" style="margin-top:16px">New goal</h2>
+  <div class="form">
+    <input id="gName" class="full" placeholder="Goal (tattoo, trip, emergency fund…)">
+    <input id="gPrice" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Price">
+    <input id="gDead" type="month" aria-label="Deadline (optional)" placeholder="Deadline YYYY-MM">
+    <input id="gMult" type="number" inputmode="decimal" min="1" step="0.5" placeholder="Own rule, e.g. 1.5 (optional)">
+    <select id="gCat" aria-label="Category when you buy it"></select>
+    <select id="gAcc" class="full" aria-label="Account the money is saved in"></select>
+    <div class="row full"><button class="primary grow" id="gAdd">Add goal</button><button id="gCancel" hidden>Cancel</button></div>
+  </div>
+  <p class="hint">The deadline is optional. With one, the goal’s monthly amount comes out of your daily allowance. When you buy it, the purchase is paid from the goal and doesn’t count as day-to-day spending; whatever is left over becomes free money in the account.</p>
+</section>
+
+<section class="card">
+  <div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Budgets by category</h2><button class="ghost" id="bEdit">Set budgets</button></div>
+  <div id="bList"></div>
+  <p class="hint" id="bHint"></p>
 </section>
 
 <section class="card">
@@ -102,41 +180,35 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 </section>
 
 <section class="card">
-  <h2 id="aTitle">Accounts</h2>
-  <ul id="aList"></ul>
-  <div class="row" style="justify-content:space-between;margin:8px 0"><b>Total</b><b id="aTot"></b></div>
-  <p class="hint" id="aHint"></p>
-  <h2 style="margin-top:14px">Move money between accounts</h2>
-  <div class="form r3"><select id="mFrom"></select><select id="mTo"></select><input id="mAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount"><button class="primary" id="mGo" style="grid-column:1/-1">Move money</button></div>
-  <h2 id="mTitle" style="margin-top:14px">Transfers and corrections</h2>
-  <ul id="mList"></ul>
-  <h2 style="margin-top:14px">Add an account (PEA…)</h2>
-  <div class="form"><input id="aName" placeholder="Account name"><input id="aBal" type="number" inputmode="decimal" step="0.01" placeholder="Current balance"><button class="primary full" id="aAdd">Add account</button></div>
-</section>
-
-<section class="card">
-  <h2>Recurring expenses</h2>
+  <h2 id="rTitle">Recurring expenses</h2>
   <div class="form r3">
-    <input id="rLabel" class="full" placeholder="Name (rent, gym, phone plan…)" style="grid-column:1/-1">
+    <input id="rLabel" placeholder="Name (rent, gym, car insurance…)" style="grid-column:1/-1">
     <input id="rAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount">
-    <select id="rCat"></select>
-    <input id="rDur" type="number" inputmode="numeric" min="1" step="1" placeholder="Months (empty = ongoing)">
+    <select id="rCat" aria-label="Category"></select>
+    <input id="rDay" type="number" inputmode="numeric" min="1" max="31" step="1" placeholder="Day of month (1–31)">
+    <select id="rEvery" aria-label="How often">
+      <option value="1">Every month</option><option value="2">Every 2 months</option><option value="3">Every 3 months</option><option value="6">Every 6 months</option><option value="12">Every year</option>
+    </select>
+    <input id="rDur" type="number" inputmode="numeric" min="1" step="1" placeholder="Payments (empty = ongoing)" style="grid-column:span 2">
     <select id="rAcc" style="grid-column:1/-1" aria-label="Account the expense is taken from"></select>
-    <button class="primary full" id="rAdd" style="grid-column:1/-1">Add recurring expense, starting this month</button>
+    <div class="row" style="grid-column:1/-1"><button class="primary grow" id="rAdd">Add recurring expense, starting this month</button><button id="rCancel" hidden>Cancel</button></div>
   </div>
+  <p class="hint" style="margin-top:0">For bills that don’t come every month (insurance, taxes), the daily allowance sets aside a monthly share so the big month doesn’t catch you out. Changes apply to every month the expense covers.</p>
   <ul id="rList"></ul>
 </section>
 
 <section class="card">
-  <h2>One-off expenses this month</h2>
-  <div class="form">
-    <input id="eLabel" placeholder="What was it?">
-    <input id="eAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount">
-    <select id="eCat"></select>
-    <select id="eAcc" aria-label="Account the expense is taken from"></select>
-    <button class="primary full" id="eAdd">Add expense</button>
-  </div>
-  <ul id="eList"></ul>
+  <h2 id="aTitle">Accounts</h2>
+  <ul id="aList"></ul>
+  <div class="row" style="justify-content:space-between;margin:8px 0"><b>Total</b><b id="aTot"></b></div>
+  <p class="hint" id="aHint"></p>
+  <p class="hint" id="aMsg" style="color:var(--ink)"></p>
+  <h2 style="margin-top:14px">Move money between accounts</h2>
+  <div class="form r3"><select id="mFrom" aria-label="From account"></select><select id="mTo" aria-label="To account"></select><input id="mAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount"><button class="primary" id="mGo" style="grid-column:1/-1">Move money</button></div>
+  <h2 id="mTitle" style="margin-top:14px">Transfers and corrections</h2>
+  <ul id="mList"></ul>
+  <h2 style="margin-top:14px">Add an account (PEA…)</h2>
+  <div class="form"><input id="aName" placeholder="Account name"><input id="aBal" type="number" inputmode="decimal" step="0.01" placeholder="Current balance"><button class="primary full" id="aAdd">Add account</button></div>
 </section>
 
 <section class="card">
@@ -157,7 +229,7 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <div class="row" style="margin-top:8px"><button id="impPaste">Import pasted text</button></div>
   <p class="hint" id="dataMsg"></p>
   <h2 style="margin-top:14px">Sync with GitHub</h2>
-  <p class="hint" id="ghInfo">Keeps your data in a private GitHub repository, so your phone and computer share the same budget.</p>
+  <p class="hint" id="ghInfo">Keeps your data in a private GitHub repository, so your phone and computer share the same budget. Changes made on two devices are merged entry by entry. Use a fine-grained token limited to this one repository, with only “Contents: Read and write”. The token is stored in this browser, so don’t connect on a shared device.</p>
   <div id="ghForm" class="form">
     <input id="ghRepo" class="full" placeholder="your-username/budget-data" autocomplete="off" autocapitalize="off" spellcheck="false">
     <input id="ghTok" class="full" type="password" placeholder="Access token" autocomplete="off">
@@ -167,7 +239,7 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <h2 style="margin-top:14px">Clean up</h2>
   <div class="row" style="flex-wrap:wrap">Delete everything older than <input id="pN" type="number" min="1" value="12" style="width:72px"> months <button id="pGo">Delete old data</button></div>
   <p class="hint" id="pInfo" style="color:var(--ink)"></p>
-  <p class="hint">Keeps current and future months and ongoing recurring expenses. Account balances stay the same: older movements are folded into a carried-forward balance.</p>
+  <p class="hint">Keeps current and future months, ongoing recurring expenses, goals and what you’ve saved for each. Account balances stay the same: older movements are folded into a carried-forward balance.</p>
 </section>
 <p class="hint" id="warn"></p>
 <p class="hint">Budget app, version <span id="ver"></span></p>
@@ -175,8 +247,45 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 
 <script>
 (function(){
-var VERSION="1.1",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
+var VERSION="2.1",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
+var ARR=["expenses","recurring","xfers","adj","goals","accounts","alloc"],MAPS=["income","budgets","paid","settings"];
+var FREQ={1:"every month",2:"every 2 months",3:"every 3 months",6:"every 6 months",12:"every year"};
+var fmt=new Intl.NumberFormat("en-GB",{style:"currency",currency:"EUR"});
 var S=load(),cur=ym(new Date());
+
+/* ---------- small helpers ---------- */
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function rd(n){return Math.round(n*100)/100}
+function eur(n){return fmt.format(Math.abs(n)<0.005?0:n)}
+function sg(n){return(n>0.004?"+":n<-0.004?"−":"")+fmt.format(Math.abs(n))}
+function sum(a,f){return a.reduce(function(s,x){return s+f(x)},0)}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function touch(o){o.u=Date.now();return o}
+function tomb(id){S.del[id]=Date.now()}
+function setMap(mp,k,v){if(v==null)delete S[mp][k];else S[mp][k]=v;S.ts[mp+":"+k]=Date.now()}
+function ym(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}
+function idx(m){var p=m.split("-");return +p[0]*12+ +p[1]-1}
+function shift(m,n){var i=idx(m)+n;return Math.floor(i/12)+"-"+String(i%12+1).padStart(2,"0")}
+function lbl(m,short){var p=m.split("-");return new Date(+p[0],+p[1]-1,1).toLocaleDateString("en-GB",{month:short?"short":"long",year:"numeric"})}
+function pad(n){return String(n).padStart(2,"0")}
+function dim(m){var p=m.split("-");return new Date(+p[0],+p[1],0).getDate()}
+function tYM(){return ym(new Date())}
+function tDay(){return new Date().getDate()}
+function mstate(m){var c=idx(m)-idx(tYM());return c<0?"past":c>0?"future":"now"}
+function ord(n){var s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
+function freq(r){var e=r.every||1;return FREQ[e]||("every "+e+" months")}
+function dayLbl(m,d){var p=m.split("-");return new Date(+p[0],+p[1]-1,d||1).toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
+
+/* ---------- schedule of recurring expenses ---------- */
+function active(r,m){var d=idx(m)-idx(r.start),e=r.every||1;return d>=0&&d%e===0&&(!r.months||d/e<r.months)&&(!r.stop||idx(m)<idx(r.stop))}
+function lastMonth(q){var a=q.stop?shift(q.stop,-1):null,b=q.months?shift(q.start,(q.months-1)*(q.every||1)):null;if(a&&b)return idx(a)<idx(b)?a:b;return a||b}
+function live(r,m){var l=lastMonth(r);return !l||idx(m)<=idx(l)}
+function nextDue(r,m){var e=r.every||1,d=idx(m)-idx(r.start),k=d<=0?0:Math.ceil(d/e),n=shift(r.start,k*e);return active(r,n)?n:null}
+function isPaid(r,m){var k=m+":"+r.id;if(S.paid[k]!=null)return !!S.paid[k];var st=mstate(m);if(st==="past")return true;if(st==="future")return false;return (r.day||1)<=tDay()}
+
+/* ---------- ledger ---------- */
 function mainId(d){return d.accounts.some(function(a){return a.id==="main"})?"main":d.accounts[0].id}
 function resolveIn(d,id){return d.accounts.some(function(a){return a.id===id})?id:mainId(d)}
 function incomeOf(d,m){if(d.income[m]!=null)return +d.income[m]||0;var best=null;Object.keys(d.income).forEach(function(k){if(idx(k)<idx(m)&&(!best||idx(k)>idx(best)))best=k});return best?(+d.income[best]||0):0}
@@ -188,146 +297,313 @@ function parts(d,id,upTo){var p={inc:0,exp:0,xin:0,xout:0,adj:0},main=mainId(d)=
   d.xfers.forEach(function(x){if(idx(x.month)<=idx(upTo)){if(x.to===id)p.xin+=x.amt;if(x.from===id)p.xout+=x.amt}});
   d.adj.forEach(function(j){if(j.acc===id&&idx(j.month)<=idx(upTo))p.adj+=j.amt});return p}
 function bal(d,id,upTo){var p=parts(d,id,upTo);return rd(p.inc-p.exp+p.xin-p.xout+p.adj)}
+
+/* ---------- storage ---------- */
 function norm(d){var fresh=!(d&&d.expenses&&d.recurring);if(fresh)d={income:{},expenses:[],recurring:[]};
   if(!d.income)d.income={};if(!d.cats||!d.cats.length)d.cats=CATS.slice();
-  if(!d.accounts)d.accounts=[{id:"main",name:"Main account",bal:0},{id:"spend",name:"Spending account",bal:0},{id:"livret",name:"Livret A",bal:0}];
+  if(!d.accounts||!d.accounts.length)d.accounts=[{id:"main",name:"Main account"},{id:"spend",name:"Spending account"},{id:"livret",name:"Livret A"}];
   if(!d.adj)d.adj=[];if(!d.xfers)d.xfers=[];
+  if(!d.budgets)d.budgets={};if(!d.paid)d.paid={};if(!d.goals)d.goals=[];if(!d.del)d.del={};if(!d.ts)d.ts={};
+  d.recurring.forEach(function(r){r.every=+r.every||1;r.day=+r.day||1});
   if(!(d.v>=2)){d.v=2;d.since=ym(new Date());
     d.accounts.forEach(function(a){var amt=rd((+a.bal||0)-bal(d,a.id,d.since));if(Math.abs(amt)>=0.005)d.adj.push({id:uid(),acc:a.id,month:d.since,amt:amt,note:"Starting balance"})})}
+  if(!d.settings)d.settings={};
+  if(!d.alloc){d.alloc=[];
+    /* v2.0 goals filled themselves from the account balance: turn that into explicit shares once (fixed ids so two devices agree) */
+    var M=idx(ym(new Date()))<idx(d.since)?d.since:ym(new Date()),by={};
+    d.goals.forEach(function(g){if(g.target!=null)(by[g.acc]=by[g.acc]||[]).push(g)});
+    Object.keys(by).forEach(function(a){var left=Math.max(0,bal(d,a,M));
+      by[a].sort(function(x,y){return idx(x.deadline)-idx(y.deadline)}).forEach(function(g){var amt=rd(Math.min(+g.target||0,left));left-=amt;if(amt>0)d.alloc.push({id:"mig-"+g.id,goal:g.id,amt:amt,month:M})})})}
+  d.goals.forEach(function(g){if(g.price==null){g.price=+g.target||0;g.mult=1;delete g.target}if(!g.cat)g.cat="Other";if(!g.deadline)g.deadline=null});
   d.accounts.forEach(function(a){delete a.bal;delete a.pct});
   d.updated=d.updated||0;return d}
 function load(){try{return norm(JSON.parse(localStorage.getItem(KEY)))}catch(e){return norm(null)}}
-function save(){S.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){$("warn").textContent="Your browser is blocking local storage on this device."}push();ghQueue()}
-function ym(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}
-function idx(m){var p=m.split("-");return +p[0]*12+ +p[1]-1}
-function shift(m,n){var i=idx(m)+n;return Math.floor(i/12)+"-"+String(i%12+1).padStart(2,"0")}
-function lbl(m,short){var p=m.split("-");return new Date(+p[0],+p[1]-1,1).toLocaleDateString("en-GB",{month:short?"short":"long",year:"numeric"})}
-var fmt=new Intl.NumberFormat("en-GB",{style:"currency",currency:"EUR"});
-function $(i){return document.getElementById(i)}
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-function active(r,m){var d=idx(m)-idx(r.start);return d>=0&&(!r.months||d<r.months)&&(!r.stop||idx(m)<idx(r.stop))}
-function incomeFor(m){if(S.income[m]!=null)return{v:S.income[m],inh:null};
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){$("warn").textContent="Your browser is blocking local storage on this device."}}
+function save(){S.updated=Date.now();var lim=Date.now()-120*864e5;Object.keys(S.del).forEach(function(k){if(S.del[k]<lim)delete S.del[k]});saveLocal();push();ghQueue()}
+function hasData(){return S.expenses.length>0||S.recurring.length>0||Object.keys(S.income).length>0||S.adj.length>0||S.xfers.length>0||S.goals.length>0||S.alloc.length>0||Object.keys(S.budgets).length>0}
+function filterOld(d,c){
+  Object.keys(d.income).filter(function(k){return idx(k)<idx(c)}).sort().slice(0,-1).forEach(function(k){delete d.income[k]});
+  d.expenses=d.expenses.filter(function(e){return idx(e.month)>=idx(c)});
+  d.recurring=d.recurring.filter(function(q){var l=lastMonth(q);return !l||idx(l)>=idx(c)});
+  d.adj=d.adj.filter(function(j){return idx(j.month)>=idx(c)});d.xfers=d.xfers.filter(function(j){return idx(j.month)>=idx(c)});
+  d.alloc=d.alloc.filter(function(a){return idx(a.month)>=idx(c)});
+  Object.keys(d.paid).forEach(function(k){if(idx(k.slice(0,7))<idx(c))delete d.paid[k]})}
+
+/* Merge two copies of the budget entry by entry, so edits made on two devices are both kept. */
+function merge(a,b){
+  var n=(b.updated||0)>(a.updated||0)?b:a,o=n===a?b:a,r=clone(n),del=r.del;
+  Object.keys(o.del).forEach(function(k){if(!(del[k]>=o.del[k]))del[k]=o.del[k]});
+  ARR.forEach(function(k){var map={},order=[];
+    n[k].concat(o[k]).forEach(function(x){var p=map[x.id];if(!p){map[x.id]=x;order.push(x.id)}else if((x.u||0)>(p.u||0))map[x.id]=x});
+    r[k]=order.map(function(id){return clone(map[id])}).filter(function(x){return x.id==="main"||!(del[x.id]>=(x.u||0))})});
+  MAPS.forEach(function(mp){var keys={};
+    [n,o].forEach(function(d){Object.keys(d[mp]).forEach(function(k){keys[k]=1});Object.keys(d.ts).forEach(function(t){if(t.indexOf(mp+":")===0)keys[t.slice(mp.length+1)]=1})});
+    Object.keys(keys).forEach(function(k){var t=mp+":"+k,tn=n.ts[t]||0,to=o.ts[t]||0,src=(tn||to)?(to>tn?o:n):((k in n[mp])?n:o);
+      if(src[mp][k]!=null)r[mp][k]=src[mp][k];else delete r[mp][k];var tt=Math.max(tn,to);if(tt)r.ts[t]=tt})});
+  o.cats.forEach(function(c){if(r.cats.indexOf(c)<0&&!del["cat:"+c])r.cats.push(c)});
+  if(a.since!==b.since){if(idx(o.since)>idx(r.since))r.since=o.since;filterOld(r,r.since)}
+  return r}
+function canon(d){var c=Object.assign({},d);delete c.updated;return JSON.stringify(c)}
+function adopt(d){S=d;saveLocal();aSig="";budSig="";render()}
+/* Bring a remote copy in. Returns the normalised remote and whether this device changed. */
+function reconcile(raw){
+  var rem=norm(raw);
+  if(canon(rem)===canon(S)){if((rem.updated||0)>(S.updated||0)){S.updated=rem.updated;saveLocal()}return{remote:rem,changed:false}}
+  if(!hasData()){adopt(clone(rem));return{remote:rem,changed:true}}
+  var m=merge(S,rem);
+  if(canon(m)===canon(rem)){adopt(clone(rem));return{remote:rem,changed:true}}
+  if(canon(m)===canon(S))return{remote:rem,changed:false};
+  m.updated=Date.now();adopt(m);return{remote:rem,changed:true}}
+
+/* ---------- accounts ---------- */
+function acc(id){return S.accounts.filter(function(a){return a.id===id})[0]}
+function openAccts(){return S.accounts.filter(function(a){return !a.closed})}
+function shownAccts(m){return S.accounts.filter(function(a){return !a.closed||idx(m)<=idx(a.closed)})}
+function accName(id){var a=acc(id)||acc("main")||S.accounts[0];return a?a.name:"Main account"}
+function anm(id){var a=acc(id);return a?a.name:"Deleted account"}
+function viewM(){return idx(cur)<idx(S.since)?S.since:cur}
+function incomeFor(m){if(S.income[m]!=null)return{v:+S.income[m]||0,inh:null};
   var best=null;Object.keys(S.income).forEach(function(k){if(idx(k)<idx(m)&&(!best||idx(k)>idx(best)))best=k});
-  return best?{v:S.income[best],inh:best}:{v:0,inh:null}}
-function opts(){return CATS.map(function(c){return"<option>"+c+"</option>"}).join("")}
+  return best?{v:+S.income[best]||0,inh:best}:{v:0,inh:null}}
 
+/* ---------- goals ---------- */
+function rule(){var v=+S.settings.mult;return v>=1?v:2}
+function goal(id){return S.goals.filter(function(g){return g.id===id})[0]}
+function multOf(g){return g.mult>=1?+g.mult:rule()}
+function targetOf(g){return rd(g.price*multOf(g))}
+function activeGoals(m){return S.goals.filter(function(g){return !g.bought||(m&&idx(m)<idx(g.bought))})}
+function gSaved(id,m){return rd(sum(S.alloc.filter(function(a){return a.goal===id&&idx(a.month)<=idx(m)}),function(a){return a.amt}))}
+function assigned(accId,m){return rd(sum(S.alloc.filter(function(a){var g=goal(a.goal);return g&&g.acc===accId&&idx(a.month)<=idx(m)}),function(a){return a.amt}))}
+function freeIn(accId,m){return rd(bal(S,accId,m)-assigned(accId,m))}
+function goalInfo(m){
+  var res={},need=0;
+  S.goals.forEach(function(g){
+    var tg=targetOf(g),sv=gSaved(g.id,m),st0=gSaved(g.id,shift(m,-1)),moved=Math.max(0,rd(sv-st0)),bought=g.bought&&idx(m)>=idx(g.bought);
+    var dl=g.deadline,ml=dl?Math.max(1,idx(dl)-idx(m)+1):null,late=!!dl&&idx(m)>idx(dl)&&sv<tg-0.004;
+    var nd=(!dl||bought||idx(m)>idx(dl))?0:Math.ceil(Math.max(0,tg-st0)/ml*100)/100;if(sv>=tg-0.004)nd=Math.min(nd,moved);
+    res[g.id]={target:tg,saved:sv,pct:tg>0?Math.min(100,sv/tg*100):0,need:nd,moved:Math.min(moved,nd),toMove:rd(Math.max(0,nd-moved)),ml:ml,late:late,
+      state:sv>=tg-0.004?"ready":sv>=g.price-0.004?"afford":"saving",bought:bought};
+    need+=nd});
+  return{g:res,need:rd(need)}}
 
+/* ---------- month plan ---------- */
+function plan(m){
+  var inc=incomeFor(m).v,recs=S.recurring.filter(function(r){return active(r,m)}),all=S.expenses.filter(function(e){return e.month===m});
+  var ones=all.filter(function(e){return !e.goal}),fromGoals=all.filter(function(e){return e.goal});
+  var bills=sum(recs,function(r){return r.amt}),mBills=sum(recs.filter(function(r){return (r.every||1)===1}),function(r){return r.amt});
+  var big=recs.filter(function(r){return (r.every||1)>1});
+  var prov=sum(S.recurring.filter(function(r){return (r.every||1)>1&&live(r,m)}),function(r){return r.amt/r.every});
+  var spent=sum(ones,function(e){return e.amt}),byCat={};ones.forEach(function(e){byCat[e.cat]=(byCat[e.cat]||0)+e.amt});
+  var budTot=0,proj=0,seen={};
+  S.cats.forEach(function(c){budTot+=+S.budgets[c]||0});
+  Object.keys(byCat).concat(S.cats).forEach(function(c){if(seen[c])return;seen[c]=1;var b=S.cats.indexOf(c)>=0?(+S.budgets[c]||0):0;proj+=Math.max(byCat[c]||0,b)});
+  var st=mstate(m);if(st==="past")proj=spent;
+  var gi=goalInfo(m),allowed=rd(inc-mBills-prov-gi.need);
+  var unpaid=recs.filter(function(r){return !isPaid(r,m)}),paidAmt=sum(recs.filter(function(r){return isPaid(r,m)}),function(r){return r.amt});
+  return{inc:inc,recs:recs,ones:ones,all:all,fromGoals:fromGoals,bills:bills,mBills:mBills,big:big,prov:prov,spent:spent,byCat:byCat,proj:proj,budTot:budTot,gi:gi,allowed:allowed,unpaid:unpaid,paidAmt:paidAmt,st:st}}
+
+/* ---------- rendering ---------- */
 function render(){
   $("title").textContent=lbl(cur);
   var inc=incomeFor(cur);
   if(document.activeElement!==$("income"))$("income").value=S.income[cur]!=null?S.income[cur]:(inc.inh?inc.v:"");
   $("incHint").textContent=S.income[cur]==null&&inc.inh?"Carried over from "+lbl(inc.inh,true)+". Edit to confirm.":"";
-  var recs=S.recurring.filter(function(r){return active(r,cur)});
-  var ones=S.expenses.filter(function(e){return e.month===cur});
-  var sRec=recs.reduce(function(a,r){return a+r.amt},0),sOne=ones.reduce(function(a,e){return a+e.amt},0),tot=sRec+sOne;
-  var ledger=idx(cur)>=idx(S.since);var left=ledger?bal(S,mainId(S),cur):inc.v-tot;
-  $("heroLbl").textContent=left>=0?"You can save":"Over budget by";$("heroSub").textContent=ledger?"Left in "+accName(mainId(S))+" at the end of "+lbl(cur)+", after expenses and transfers.":"Income minus expenses. Balances are tracked from "+lbl(S.since)+".";
-  $("heroVal").textContent=fmt.format(Math.abs(left));
-  $("heroVal").className="big "+(left>=0?"pos":"neg");
-  var pct=inc.v>0?Math.min(100,tot/inc.v*100):(tot>0?100:0);
-  $("bar").style.width=pct+"%";
-  $("barTxt").textContent=inc.v>0?Math.round(tot/inc.v*100)+"% of your income goes on expenses":"Enter the money received to see your savings.";
-  $("sRec").textContent=fmt.format(sRec);$("sOne").textContent=fmt.format(sOne);$("sTot").textContent=fmt.format(tot);
-
-  var by={};recs.concat(ones).forEach(function(x){by[x.cat]=(by[x.cat]||0)+x.amt});
-  var keys=Object.keys(by).sort(function(a,b){return by[b]-by[a]}),mx=keys.length?by[keys[0]]:1;
-  $("cats").innerHTML=keys.length?keys.map(function(k){return'<div class="cat"><span>'+esc(k)+'</span><div class="track"><div class="fill" style="width:'+by[k]/mx*100+'%"></div></div><span>'+fmt.format(by[k])+'</span></div>'}).join(""):'<div class="empty">No expenses yet this month.</div>';
-
-  $("rList").innerHTML=S.recurring.length?S.recurring.map(function(r){
-    var on=active(r,cur),end=r.stop?"stopped from "+lbl(r.stop,true):(r.months?"until "+lbl(shift(r.start,r.months-1),true):"ongoing");
-    return'<li style="'+(on?"":"opacity:.55")+'"><div class="t">'+esc(r.label)+(on?"":'<span class="tag">not this month</span>')+'<span>'+esc(r.cat)+" · from "+lbl(r.start,true)+" · "+end+" · taken from "+esc(accName(r.acc))+'</span></div><div class="a">'+fmt.format(r.amt)+'</div><button class="ghost" data-s="'+r.id+'">'+(r.stop?"Resume":"Stop")+'</button><button class="ghost" data-r="'+r.id+'" aria-label="Delete">✕</button></li>'}).join(""):'<li class="empty" style="border:0">Add rent, subscriptions or a loan once and they count every month automatically.</li>';
-
-  $("eList").innerHTML=ones.length?ones.map(function(e){
-    return'<li><div class="t">'+esc(e.label)+'<span>'+esc(e.cat)+" · taken from "+esc(accName(e.acc))+'</span></div><div class="a">'+fmt.format(e.amt)+'</div><button class="ghost" data-e="'+e.id+'" aria-label="Delete">✕</button></li>'}).join(""):'<li class="empty" style="border:0">Nothing added yet.</li>';renderAccounts();
+  var p=plan(cur);
+  renderHero(p);renderDaily(p);renderOnes(p);renderGoals(p);renderBudgets(p);renderRec();renderAccounts();
 }
 
-$("income").addEventListener("input",function(){var v=parseFloat(this.value);if(isNaN(v)){delete S.income[cur]}else{S.income[cur]=v}save();renderTotalsOnly()});
-function renderTotalsOnly(){var a=document.activeElement;render();}
-$("income").addEventListener("blur",render);
-$("prev").onclick=function(){cur=shift(cur,-1);render()};
-$("next").onclick=function(){cur=shift(cur,1);render()};
-$("today").onclick=function(){cur=ym(new Date());render()};
-$("rAdd").onclick=function(){
-  var a=parseFloat($("rAmt").value),l=$("rLabel").value.trim(),d=parseInt($("rDur").value,10);
-  if(!l||isNaN(a)||a<=0){$("rLabel").focus();return}
-  S.recurring.push({id:uid(),label:l,amt:a,cat:$("rCat").value,acc:$("rAcc").value,start:cur,months:d>0?d:null});
-  save();$("rLabel").value="";$("rAmt").value="";$("rDur").value="";render()};
-$("eAdd").onclick=function(){
-  var a=parseFloat($("eAmt").value),l=$("eLabel").value.trim();
-  if(!l||isNaN(a)||a<=0){$("eLabel").focus();return}
-  S.expenses.push({id:uid(),month:cur,label:l,amt:a,cat:$("eCat").value,acc:$("eAcc").value});
-  save();$("eLabel").value="";$("eAmt").value="";$("eLabel").focus();render()};
-["eLabel","eAmt"].forEach(function(i){$(i).addEventListener("keydown",function(e){if(e.key==="Enter")$("eAdd").click()})});
-document.addEventListener("click",function(e){
-  var r=e.target.getAttribute&&e.target.getAttribute("data-r"),x=e.target.getAttribute&&e.target.getAttribute("data-e");
-  if(r){S.recurring=S.recurring.filter(function(i){return i.id!==r});save();render()}
-  if(x){S.expenses=S.expenses.filter(function(i){return i.id!==x});save();render()}});
+function renderHero(p){
+  var st=p.st,saved=p.inc-p.bills-p.proj,ledger=idx(cur)>=idx(S.since);
+  var L={past:["You saved","You overspent by"],now:["Expected savings this month","Expected overspend this month"],future:["Planned savings","Planned overspend"]}[st];
+  $("heroLbl").textContent=saved>=-0.004?L[0]:L[1];
+  $("heroVal").textContent=eur(Math.abs(saved));$("heroVal").className="big "+(saved>=-0.004?"pos":"neg");
+  var hasBud=p.budTot>0;
+  $("heroSub").textContent="Income "+eur(p.inc)+" − bills "+eur(p.bills)+" − day-to-day "+eur(p.proj)+(st==="now"?" ("+eur(p.spent)+" spent so far"+(hasBud&&p.proj>p.spent+0.004?", the rest from your budgets":"")+")":"")+".";
+  var used=st==="now"?p.paidAmt+p.spent:st==="past"?p.bills+p.spent:p.bills+p.proj;
+  var pct=p.inc>0?Math.min(100,Math.max(0,used/p.inc*100)):(used>0?100:0);
+  $("bar").style.width=pct+"%";$("bar").className="fill"+(p.inc>0&&used>p.inc?" over":"");
+  $("barTxt").textContent=p.inc>0?Math.round(used/p.inc*100)+"% of the month’s income "+(st==="now"?"already spent":st==="past"?"spent":"planned to be spent")+".":"Enter the money received to see your savings.";
+  var tot=0;shownAccts(cur).forEach(function(a){tot+=bal(S,a.id,cur)});
+  $("sMain").textContent=ledger?eur(bal(S,mainId(S),cur)):"—";$("sAll").textContent=ledger?eur(tot):"—";
+  if(st==="now"){$("sDueL").textContent="Bills still to pay ("+p.unpaid.length+")";$("sDue").textContent=eur(sum(p.unpaid,function(r){return r.amt}))}
+  else{$("sDueL").textContent="Bills this month ("+p.recs.length+")";$("sDue").textContent=eur(p.bills)}
+  var notes=[];
+  if(st==="now"&&tDay()>=5&&p.spent>0){var pace=p.spent/tDay()*dim(cur);notes.push("At your current pace, day-to-day spending would reach about "+eur(pace)+", leaving "+eur(p.inc-p.bills-pace)+".")}
+  if(!hasBud&&st!=="past")notes.push("Set budgets by category below so this forecast also counts the spending still to come.");
+  p.big.forEach(function(r){notes.push("Includes "+esc(r.label)+" ("+eur(r.amt)+", "+freq(r)+"). Use the money set aside for it in earlier months.")});
+  if(p.fromGoals.length)notes.push(eur(sum(p.fromGoals,function(e){return e.amt}))+" paid from savings goals ("+p.fromGoals.map(function(e){return esc(e.label)}).join(", ")+") isn’t counted here: it came from money you’d already saved.");
+  if(!ledger)notes.push("Account balances are tracked from "+lbl(S.since)+".");
+  $("heroNotes").innerHTML=notes.map(function(n){return"<p>"+n+"</p>"}).join("");
+}
 
-var lockAcc=false,armed=null,ref=null,timer=null;
-function acc(id){return S.accounts.filter(function(a){return a.id===id})[0]}
-function rd(n){return Math.round(n*100)/100}
-function twice(t,key,fn){if(armed===key){armed=null;fn()}else{armed=key;var o=t.textContent;t.textContent="Click again to confirm";setTimeout(function(){if(armed===key){armed=null;t.textContent=o}},4000)}}
-function fillRacc(){["rAcc","eAcc"].forEach(function(id){var sel=$(id),v=sel.value||"main";sel.innerHTML=S.accounts.map(function(a){return'<option value="'+a.id+'">Taken from: '+esc(a.name)+'</option>'}).join("");sel.value=acc(v)?v:S.accounts[0].id})}
-function accName(id){var a=acc(id)||acc("main")||S.accounts[0];return a?a.name:"Main account"}
+function renderDaily(p){
+  var st=p.st,D=dim(cur),hasGoals=S.goals.length>0;
+  var lines=[["Money received",p.inc],["Monthly bills",-p.mBills]];
+  if(p.prov>0.004)lines.push(["Set aside for bills that aren’t monthly",-p.prov]);
+  if(hasGoals)lines.push(["Savings goals",-p.gi.need]);
+  $("dCalc").innerHTML=lines.map(function(l){return'<li><div class="t">'+l[0]+'</div><div class="a">'+sg(l[1])+'</div></li>'}).join("")+'<li class="tot"><div class="t">For day-to-day spending</div><div class="a">'+eur(p.allowed)+'</div></li>';
+  var showBar=true,cls="pos";
+  if(p.allowed<0){
+    $("dLbl").textContent="Your bills and goals need more than your income";
+    $("dVal").textContent=eur(-p.allowed)+" short";cls="neg";showBar=false;
+    $("dSub").textContent="Push back a goal’s deadline, lower a target or cut a bill to get a daily allowance back.";
+    $("dBarTxt").textContent="";
+  }else if(st==="now"){
+    var td=tDay(),left=D-td+1,todaySp=sum(p.ones.filter(function(e){return e.day===td}),function(e){return e.amt});
+    var rem=p.allowed-(p.spent-todaySp),per=rem/left,leftToday=per-todaySp;
+    if(rem<=0){$("dLbl").textContent="This month’s day-to-day money is used up";$("dVal").textContent=eur(0)+" a day";cls="neg";
+      $("dSub").textContent="You’re "+eur(-rem)+" over"+(hasGoals?", so your goals will get less this month unless you cut back.":".")}
+    else{$("dLbl").textContent="You can spend";$("dVal").textContent=eur(per)+" a day";
+      $("dSub").textContent="for the "+left+" day"+(left>1?"s":"")+" left in "+lbl(cur).split(" ")[0]+", including today. "+(leftToday>=-0.004?eur(leftToday)+" left for today ("+eur(todaySp)+" spent today).":"You’re "+eur(-leftToday)+" over today’s amount; it’s spread over the coming days, so tomorrow’s allowance is a little lower.");
+      if(leftToday<-0.004)cls="neg"}
+    $("dBarTxt").textContent=eur(p.spent)+" of "+eur(p.allowed)+" day-to-day money used.";
+  }else if(st==="future"){
+    $("dLbl").textContent="Planned allowance";$("dVal").textContent=eur(p.allowed/D)+" a day";
+    $("dSub").textContent="if "+lbl(cur)+" goes as planned ("+eur(p.allowed)+" for the month).";
+    $("dBarTxt").textContent=p.spent?eur(p.spent)+" already entered for this month.":"";
+  }else{
+    var ok=p.spent<=p.allowed+0.004;
+    $("dLbl").textContent=ok?"You stayed within your plan":"You went over your plan";$("dVal").textContent=eur(p.spent/D)+" a day";cls=ok?"pos":"neg";
+    $("dSub").textContent="on average. You spent "+eur(p.spent)+" on day-to-day out of "+eur(p.allowed)+" planned.";
+    $("dBarTxt").textContent="";
+  }
+  $("dVal").className="big2 "+cls;
+  $("dTrack").hidden=!showBar;
+  var pc=p.allowed>0?p.spent/p.allowed*100:(p.spent>0?100:0);
+  $("dBar").style.width=Math.min(100,Math.max(0,pc))+"%";$("dBar").className="fill"+(pc>100?" over":"");
+  var w=[];
+  if(p.budTot>p.allowed+0.004&&p.allowed>=0&&st!=="past")w.push('<span class="neg">Your category budgets add up to '+eur(p.budTot)+', more than the '+eur(p.allowed)+' available. Lower some budgets to stay on track for your goals.</span>');
+  if(!hasGoals)w.push("Add a savings goal below and this allowance will show what you can spend each day while still reaching it.");
+  $("dWarn").innerHTML=w.map(function(n){return"<p>"+n+"</p>"}).join("");
+}
+
+var editE=null,dateFor=null;
+function defDate(){return cur===tYM()?cur+"-"+pad(tDay()):cur+"-01"}
+function renderOnes(p){
+  $("eTitle").textContent="One-off expenses in "+lbl(cur);
+  $("eDate").min=cur+"-01";$("eDate").max=cur+"-"+pad(dim(cur));
+  if(!editE&&dateFor!==cur){dateFor=cur;$("eDate").value=defDate()}
+  var ones=p.all.slice().sort(function(a,b){return (b.day||0)-(a.day||0)});
+  $("eList").innerHTML=ones.length?ones.map(function(e){var ref=e.amt<0;
+    return'<li><div class="t">'+esc(e.label)+(ref?'<span class="tag">Refund</span>':'')+(e.goal?'<span class="tag">Paid from goal</span>':'')+'<span>'+(e.day?dayLbl(cur,e.day)+" · ":"")+esc(e.cat)+" · taken from "+esc(accName(e.acc))+'</span></div><div class="a'+(ref?' pos':'')+'">'+(ref?sg(-e.amt):eur(e.amt))+'</div><button class="ghost" data-ee="'+e.id+'">Edit</button><button class="ghost" data-e="'+e.id+'" aria-label="Delete">✕</button></li>'}).join(""):'<li class="empty" style="border:0">Nothing added yet.</li>';
+}
+
+var editG=null,tbFor=null,splitSig="";
+function renderGoals(p){
+  var main=mainId(S),st=p.st,m=viewM(),act=activeGoals(cur).sort(function(a,b){return (a.deadline?idx(a.deadline):1e9)-(b.deadline?idx(b.deadline):1e9)});
+  if(document.activeElement!==$("ruleX"))$("ruleX").value=rule();
+  var accs={};act.forEach(function(g){accs[g.acc]=1});
+  $("gAccts").innerHTML=Object.keys(accs).filter(acc).map(function(a){var b=bal(S,a,m),as=assigned(a,m),fr=rd(b-as);
+    return'<div class="asum"><b>'+esc(accName(a))+'</b>: '+eur(b)+' in the account · '+eur(as)+' in goals · '+(fr<-0.004?'<span class="neg">'+eur(-fr)+' missing. Take money back from a goal so the goals match what’s really there.</span>':eur(fr)+' free')+'</div>'}).join("");
+  $("gList").innerHTML=act.length?act.map(function(g){var i=p.gi.g[g.id],x=multOf(g),s,btns="";
+    if(i.state==="ready")s='<span class="pos">Ready: you have '+(x===1?"the full price":x+"× the price")+'. Go for it!</span>';
+    else if(i.state==="afford")s="You could pay for it now, but your rule says wait until "+eur(i.target)+" ("+eur(i.target-i.saved)+" to go).";
+    else s=eur(g.price-i.saved)+" to go before you can afford it"+(x>1?", "+eur(i.target-i.saved)+" before your rule says go":"")+".";
+    if(i.late)s+=' <span class="neg">The deadline has passed.</span>';
+    else if(g.deadline&&i.need>0&&i.state!=="ready")s+=" Put aside "+eur(i.need)+" a month to be ready by "+lbl(g.deadline)+(i.moved>0.004?" ("+eur(i.moved)+" added this month).":".");
+    else if(!g.deadline&&i.state!=="ready")s+=" No deadline, so it isn’t taken out of your daily allowance.";
+    if(i.toMove>0.004&&st!=="past"&&acc(g.acc))btns+='<button class="primary sm" data-gm="'+g.id+'">Add '+eur(i.toMove)+(g.acc!==main?" from Main":"")+'</button>';
+    if(i.state==="ready")btns+='<button class="primary sm" data-gb="'+g.id+'">I bought it</button>';
+    if(i.saved>0.004)btns+='<button class="ghost" data-gt="'+g.id+'">Take back</button>';
+    btns+='<button class="ghost" data-ge="'+g.id+'">Edit</button><button class="ghost" data-gd="'+g.id+'">Delete</button>';
+    var mk=x>1?'<div class="mark" style="left:'+Math.min(100,100/x)+'%" title="Price"></div>':'';
+    return'<li class="blk goal"><div class="row" style="align-items:flex-start"><div class="t">'+esc(g.name)+'<span>Price '+eur(g.price)+(x>1?" · ready at "+x+"× = "+eur(i.target):"")+(g.deadline?" · by "+lbl(g.deadline):"")+" · in "+esc(accName(g.acc))+'</span></div><div class="a">'+eur(i.saved)+' / '+eur(i.target)+'</div></div><div class="track"><div class="fill'+(i.late?" over":"")+'" style="width:'+i.pct+'%"></div>'+mk+'</div><p class="hint" style="margin:6px 0">'+s+'</p>'+(tbFor===g.id?'<div class="tb"><input type="number" inputmode="decimal" min="0" step="0.01" id="tbAmt" placeholder="Amount" aria-label="Amount to take back"><button class="sm" data-gtg="'+g.id+'">Take back</button><button class="ghost" data-gt="'+g.id+'">Cancel</button></div><p class="hint" style="margin:4px 0">The money stays in '+esc(accName(g.acc))+' as free money.</p>':'')+'<div class="acts" style="margin:0">'+btns+'</div></li>'}).join(""):'<li class="empty" style="border:0">No goals yet. Add one below, for example a trip or a tattoo saved on your Livret A.</li>';
+  var done=S.goals.filter(function(g){return g.bought&&idx(cur)>=idx(g.bought)});
+  $("gDone").innerHTML=done.length?'<li class="hint" style="border:0;padding-bottom:0">Done</li>'+done.map(function(g){return'<li><div class="t">'+esc(g.name)+'<span>Bought in '+lbl(g.bought)+' for '+eur(g.price)+'</span></div><button class="ghost" data-gx="'+g.id+'" aria-label="Remove from the list">✕</button></li>'}).join(""):"";
+  var sig=act.map(function(g){return g.id+g.name+g.acc}).join("|");
+  if(sig!==splitSig){splitSig=sig;$("sSplit").innerHTML=act.map(function(g){return'<li><div class="t">'+esc(g.name)+'<span>in '+esc(accName(g.acc))+'</span></div><input type="number" inputmode="decimal" min="0" step="0.01" data-sp="'+g.id+'" placeholder="0" aria-label="Amount for '+esc(g.name)+'"></li>'}).join("")}
+  $("sSplit").hidden=!act.length;
+  var fv=$("sFrom").value||"main";$("sFrom").innerHTML='<option value="main">Move it from '+esc(accName(main))+' now</option><option value="free">It’s already in the savings account (free money)</option>';$("sFrom").value=fv;
+}
+
+var editBud=false,budSig="";
+function budRow(c,p){
+  var b=+S.budgets[c]||0,s=p.byCat[c]||0,mx=Math.max.apply(null,[1].concat(Object.keys(p.byCat).map(function(k){return p.byCat[k]})));
+  var w=b?Math.min(100,Math.max(0,s/b*100)):Math.max(0,s/mx*100),over=b&&s>b+0.004,x="";
+  if(b){x=s<=b+0.004?eur(b-s)+" left":'<span class="neg">'+eur(s-b)+" over</span>";
+    if(p.st==="now"&&tDay()>=5&&s>0){var pace=s/tDay()*dim(cur);if(pace>b*1.05&&!over)x+=' · <span class="neg">on pace for '+eur(pace)+"</span>"}}
+  else x=s?"No budget":"";
+  return{t:eur(s)+(b?" / "+eur(b):""),w:w,cls:"fill"+(over?" over":b?"":" soft"),x:x}}
+function renderBudgets(p){
+  var cats=S.cats.filter(function(c){return editBud||(+S.budgets[c]||0)>0||Math.abs(p.byCat[c]||0)>0.004});
+  Object.keys(p.byCat).forEach(function(c){if(S.cats.indexOf(c)<0&&cats.indexOf(c)<0)cats.push(c)});
+  $("bEdit").textContent=editBud?"Done":"Set budgets";
+  var sig=editBud+"|"+cats.join("|");
+  if(sig!==budSig||!editBud){budSig=sig;
+    $("bList").innerHTML=cats.length?cats.map(function(c){var r=budRow(c,p);
+      return'<div class="bud"><div class="bh"><span>'+esc(c)+'</span><span class="hint" data-bt="'+esc(c)+'">'+r.t+'</span></div><div class="track"><div class="'+r.cls+'" data-bf="'+esc(c)+'" style="width:'+r.w+'%"></div></div><div class="hint" data-bx="'+esc(c)+'">'+r.x+'</div>'+(editBud&&S.cats.indexOf(c)>=0?'<input type="number" inputmode="decimal" min="0" step="1" data-bud="'+esc(c)+'" value="'+(S.budgets[c]||"")+'" placeholder="No budget" aria-label="Monthly budget for '+esc(c)+'">':'')+'</div>'}).join(""):'<div class="empty">No day-to-day spending yet. Tap “Set budgets” to plan how much you spend per category each month.</div>';
+  }else{
+    cats.forEach(function(c){var r=budRow(c,p),q=function(a){return $("bList").querySelector("["+a+'="'+c.replace(/"/g,'\\"')+'"]')};
+      var t=q("data-bt"),f=q("data-bf"),x=q("data-bx");if(t)t.innerHTML=r.t;if(f){f.style.width=r.w+"%";f.className=r.cls}if(x)x.innerHTML=r.x})}
+  $("bHint").textContent="Budgets cover one-off spending (food, outings, shopping…); recurring bills are counted separately. They apply to every month. Total: "+eur(p.budTot)+" a month.";
+}
+
+var editR=null;
+function renderRec(){
+  var m=cur;
+  $("rList").innerHTML=S.recurring.length?S.recurring.map(function(r){
+    var on=active(r,m),l=lastMonth(r),end=l?(r.stop&&(!r.months||idx(shift(r.stop,-1))<=idx(l))?"ends after ":"until ")+lbl(l,true):"ongoing",tag;
+    if(on){var pd=isPaid(r,m);tag='<button class="tagb'+(pd?' ok':'')+'" data-p="'+r.id+'" title="Tap to switch between paid and due">'+(pd?"Paid ✓":"Due on the "+ord(r.day||1))+'</button>'}
+    else{var nd=nextDue(r,m);tag='<span class="tag">'+(nd?"next: "+lbl(nd,true):"not this month")+'</span>'}
+    return'<li style="flex-wrap:wrap;'+(on?'':'opacity:.65')+'"><div class="t">'+esc(r.label)+tag+'<span>'+esc(r.cat)+" · "+freq(r)+", on the "+ord(r.day||1)+" · from "+lbl(r.start,true)+" · "+end+" · taken from "+esc(accName(r.acc))+'</span></div><div class="a">'+eur(r.amt)+'</div><div class="acts"><button class="ghost" data-re="'+r.id+'">Edit</button><button class="ghost" data-s="'+r.id+'">'+(r.stop?"Resume":"End after this month")+'</button><button class="ghost" data-r="'+r.id+'">Delete</button></div></li>'}).join(""):'<li class="empty" style="border:0">Add rent, subscriptions or a loan once and they count every month automatically.</li>';
+}
+
+/* ---------- selects ---------- */
+function setSel(sel,html,v,def){sel.innerHTML=html;sel.value=(v&&sel.querySelector('option[value="'+v+'"]'))?v:def}
+function accOpts(prefix){return openAccts().map(function(a){return'<option value="'+a.id+'">'+prefix+esc(a.name)+'</option>'}).join("")}
+function fillSelects(){var main=mainId(S),nm=openAccts().filter(function(a){return a.id!==main}),other=(nm.filter(function(a){return /livret|saving|épargne|ldd|pel/i.test(a.name)})[0]||nm[0]||{id:main}).id;
+  setSel($("rAcc"),accOpts("Taken from: "),$("rAcc").value,main);
+  setSel($("eAcc"),accOpts("Taken from: "),$("eAcc").value,main);
+  setSel($("gAcc"),accOpts("Saved in: "),$("gAcc").value,other);
+  setSel($("mFrom"),accOpts(""),$("mFrom").value,main);
+  setSel($("mTo"),accOpts(""),$("mTo").value,other)}
+function fillCats(){["rCat","eCat","gCat"].forEach(function(id){var sel=$(id),v=sel.value;sel.innerHTML=S.cats.map(function(c){return"<option>"+esc(c)+"</option>"}).join("");if(v&&S.cats.indexOf(v)>=0)sel.value=v})}
+function fillDacc(){var sel=$("dAcc"),v=sel.value||"all";sel.innerHTML='<option value="all">All accounts</option>'+S.accounts.map(function(a){return'<option value="'+a.id+'">'+esc(a.name)+'</option>'}).join("");sel.value=(v==="all"||acc(v))?v:"all"}
+
+/* ---------- accounts card ---------- */
 var aSig="";
-function sg(n){return(n>0.004?"+":n<-0.004?"−":"")+fmt.format(Math.abs(n))}
-function viewM(){return idx(cur)<idx(S.since)?S.since:cur}
-function anm(id){var a=acc(id);return a?a.name:"Deleted account"}
-function renderAccounts(){fillRacc();fillCats();fillDacc();renderDonut();renderCatMgr();updPurge();
-  var bm=viewM(),tot=0,sig=S.accounts.map(function(a){return a.id}).join("|");
+function renderAccounts(){fillSelects();fillCats();fillDacc();renderDonut();renderCatMgr();updPurge();
+  var bm=viewM(),tot=0,list=shownAccts(bm),main=mainId(S),sig=list.map(function(a){return a.id+(a.closed?"c":"")}).join("|");
   $("aTitle").textContent="Accounts at the end of "+lbl(bm);
-  $("aHint").textContent=(bm!==cur?"Balances are tracked from "+lbl(S.since)+", so this shows that month. ":"")+"Balances come from your income (paid into the Main account), expenses and transfers. To correct one, for example after taking money out of your Livret A, type the real amount: the difference is saved as a correction.";
-  if(sig!==aSig){aSig=sig;$("aList").innerHTML=S.accounts.map(function(a){return'<li class="acct"><div class="t"><input data-ai="'+a.id+'" data-f="name" value="'+esc(a.name)+'" aria-label="Account name"></div><input class="num" data-ai="'+a.id+'" data-f="bal" type="number" step="0.01" inputmode="decimal" aria-label="Balance"><button class="ghost" data-ad="'+a.id+'" aria-label="Delete account"'+(a.id===mainId(S)?' hidden':'')+'>✕</button><div class="bd" data-bd="'+a.id+'"></div></li>'}).join("")}
-  S.accounts.forEach(function(a){
+  $("aHint").textContent=(bm!==cur?"Balances are tracked from "+lbl(S.since)+", so this shows that month. ":"")+"Balances come from your income (paid into the Main account), expenses and transfers. To correct one, for example after taking money out of your Livret A, type the real amount: the difference is saved as a correction. Removing an account that has history closes it: its balance moves to Main and past months stay correct.";
+  if(sig!==aSig){aSig=sig;$("aList").innerHTML=list.map(function(a){return'<li class="acct"><div class="t"><input data-ai="'+a.id+'" data-f="name" value="'+esc(a.name)+'" aria-label="Account name"></div><input class="num" data-ai="'+a.id+'" data-f="bal" type="number" step="0.01" inputmode="decimal" aria-label="Balance"'+(a.closed?" disabled":"")+'><button class="ghost" data-ad="'+a.id+'" aria-label="Remove account"'+(a.id===main||a.closed?' hidden':'')+'>✕</button><div class="bd" data-bd="'+a.id+'"></div></li>'}).join("")}
+  list.forEach(function(a){
     var p=parts(S,a.id,bm),b=rd(p.inc-p.exp+p.xin-p.xout+p.adj),x=p.xin-p.xout,pc=[];tot+=b;
     var inp=document.querySelector('[data-ai="'+a.id+'"][data-f="bal"]'),bd=document.querySelector('[data-bd="'+a.id+'"]');
     if(inp&&document.activeElement!==inp)inp.value=b.toFixed(2);
+    if(a.closed)pc.push("Closed after "+lbl(a.closed,true));
     if(p.inc)pc.push("Income "+sg(p.inc));if(p.exp)pc.push("Expenses "+sg(-p.exp));if(Math.abs(x)>0.004)pc.push("Transfers "+sg(x));if(Math.abs(p.adj)>0.004)pc.push("Corrections "+sg(p.adj));
+    var as=assigned(a.id,bm);if(Math.abs(as)>0.004)pc.push("In goals "+eur(as)+", free "+eur(b-as));
     if(bd)bd.textContent=pc.length?pc.join(" · "):"No movements yet."});
-  $("aTot").textContent=fmt.format(rd(tot));
-  ["mFrom","mTo"].forEach(function(id,i){var sel=$(id),v=sel.value;
-    sel.innerHTML=S.accounts.map(function(a){return'<option value="'+a.id+'">'+esc(a.name)+'</option>'}).join("");
-    if(v&&acc(v))sel.value=v;else if(i===1&&S.accounts.length>1)sel.value=S.accounts[1].id});
+  $("aTot").textContent=eur(rd(tot));
   var mv=[];
-  S.xfers.forEach(function(x){if(x.month===bm)mv.push('<li><div class="t">'+esc(anm(x.from))+' → '+esc(anm(x.to))+'<span>Transfer</span></div><div class="a">'+fmt.format(x.amt)+'</div><button class="ghost" data-xd="'+x.id+'" aria-label="Delete transfer">✕</button></li>')});
+  S.xfers.forEach(function(x){if(x.month===bm)mv.push('<li><div class="t">'+esc(anm(x.from))+' → '+esc(anm(x.to))+'<span>Transfer</span></div><div class="a">'+eur(x.amt)+'</div><button class="ghost" data-xd="'+x.id+'" aria-label="Delete transfer">✕</button></li>')});
   S.adj.forEach(function(j){if(j.month===bm)mv.push('<li><div class="t">'+esc(anm(j.acc))+'<span>'+esc(j.note||"Correction")+'</span></div><div class="a">'+sg(j.amt)+'</div><button class="ghost" data-jd="'+j.id+'" aria-label="Delete correction">✕</button></li>')});
   $("mTitle").textContent="Transfers and corrections in "+lbl(bm);
   $("mList").innerHTML=mv.length?mv.join(""):'<li class="empty" style="border:0">Nothing recorded this month.</li>'
 }
-document.addEventListener("change",function(e){
-  var t=e.target,id=t.getAttribute&&t.getAttribute("data-ai");if(!id)return;
-  var a=acc(id),f=t.getAttribute("data-f");if(!a)return;
-  if(f==="name"){a.name=t.value.trim()||a.name;save();render();return}
-  var bm=viewM(),c=bal(S,id,bm),v=parseFloat(t.value);
-  if(!isNaN(v)){var diff=rd(v-c);if(Math.abs(diff)>=0.005){S.adj.push({id:uid(),acc:id,month:bm,amt:diff,note:"Balance set by hand"});save()}}
-  render();t.value=bal(S,id,bm).toFixed(2)});
-document.addEventListener("click",function(e){
-  var t=e.target,g=function(k){return t.getAttribute&&t.getAttribute(k)},s=g("data-s"),ad=g("data-ad"),xd=g("data-xd"),jd=g("data-jd");
-  if(s){var rc=S.recurring.filter(function(i){return i.id===s})[0];if(rc){if(rc.stop)delete rc.stop;else rc.stop=cur;save();render()}}
-  if(xd){S.xfers=S.xfers.filter(function(i){return i.id!==xd});save();render()}
-  if(jd){S.adj=S.adj.filter(function(i){return i.id!==jd});save();render()}
-  if(ad&&ad!==mainId(S))twice(t,"del"+ad,function(){S.accounts=S.accounts.filter(function(a){return a.id!==ad});S.adj=S.adj.filter(function(j){return j.acc!==ad});save();render()})});
-$("mGo").onclick=function(){
-  var a=parseFloat($("mAmt").value),f=$("mFrom").value,to=$("mTo").value;
-  if(!acc(f)||!acc(to)||f===to||isNaN(a)||a<=0){$("mAmt").focus();return}
-  S.xfers.push({id:uid(),from:f,to:to,amt:rd(a),month:viewM()});$("mAmt").value="";save();render()};
-$("aAdd").onclick=function(){
-  var n=$("aName").value.trim(),b=parseFloat($("aBal").value);if(!n){$("aName").focus();return}
-  var id=uid();S.accounts.push({id:id,name:n});
-  if(!isNaN(b)&&b!==0)S.adj.push({id:uid(),acc:id,month:viewM(),amt:rd(b),note:"Starting balance"});
-  $("aName").value="";$("aBal").value="";save();render()};
+function hasRefs(id){return S.expenses.some(function(e){return e.acc===id})||S.recurring.some(function(r){return r.acc===id})||S.xfers.some(function(x){return x.from===id||x.to===id})||S.goals.some(function(g){return g.acc===id})}
+function removeAcc(id){
+  var a=acc(id),main=mainId(S);if(!a||id===main)return;
+  if(!hasRefs(id)){S.accounts=S.accounts.filter(function(x){return x.id!==id});S.adj=S.adj.filter(function(j){if(j.acc===id){tomb(j.id);return false}return true});tomb(id);$("aMsg").textContent=a.name+" deleted.";return}
+  var m=viewM(),b=bal(S,id,m),nm=shift(m,1);
+  if(Math.abs(b)>=0.005)S.xfers.push(touch(b>0?{id:uid(),from:id,to:main,amt:rd(b),month:m}:{id:uid(),from:main,to:id,amt:rd(-b),month:m}));
+  S.recurring.slice().forEach(function(r){if(r.acc!==id)return;var nd=nextDue(r,nm);if(!nd)return;
+    var k=(idx(nd)-idx(r.start))/(r.every||1),c=Object.assign({},r,{id:uid(),acc:main,start:nd,months:r.months?r.months-k:null});
+    S.recurring.push(touch(c));r.stop=nm;touch(r)});
+  S.expenses.forEach(function(e){if(e.acc===id&&idx(e.month)>idx(m)){e.acc=main;touch(e)}});
+  S.goals.forEach(function(g){if(g.acc===id){g.acc=main;touch(g)}});
+  a.closed=m;touch(a);
+  $("aMsg").textContent=a.name+" closed."+(Math.abs(b)>=0.005?" Its "+eur(b)+" moved to "+accName(main)+".":"")+" Anything still planned on it now uses "+accName(main)+".";
+}
 
+/* ---------- donut ---------- */
 var PAL=["#0e6d70","#e07a2f","#7a5cc4","#c9a227","#d6457a","#3f8f3f","#2e86c1","#8d6e63","#7f8c8d","#b05cc4"];
-function fillCats(){["rCat","eCat"].forEach(function(id){var sel=$(id),v=sel.value;sel.innerHTML=S.cats.map(function(c){return"<option>"+esc(c)+"</option>"}).join("");if(v&&S.cats.indexOf(v)>=0)sel.value=v})}
-function fillDacc(){var sel=$("dAcc"),v=sel.value||"all";sel.innerHTML='<option value="all">All accounts</option>'+S.accounts.map(function(a){return'<option value="'+a.id+'">'+esc(a.name)+'</option>'}).join("");sel.value=(v==="all"||acc(v))?v:"all"}
-function resolveAcc(id){return acc(id)?id:(acc("main")?"main":S.accounts[0].id)}
-$("dAcc").onchange=renderDonut;
 function renderDonut(){
   var v=$("dAcc").value||"all";
-  var items=S.recurring.filter(function(q){return active(q,cur)}).concat(S.expenses.filter(function(e){return e.month===cur})).filter(function(x){return v==="all"||resolveAcc(x.acc)===v});
-  var by={},tot=0;items.forEach(function(x){by[x.cat]=(by[x.cat]||0)+x.amt;tot+=x.amt});
-  var keys=Object.keys(by).sort(function(a,b){return by[b]-by[a]});
+  var items=S.recurring.filter(function(q){return active(q,cur)}).concat(S.expenses.filter(function(e){return e.month===cur})).filter(function(x){return v==="all"||resolveIn(S,x.acc)===v});
+  var by={},tot=0;items.forEach(function(x){by[x.cat]=(by[x.cat]||0)+x.amt});
+  var keys=Object.keys(by).filter(function(k){return by[k]>0.004}).sort(function(a,b){return by[b]-by[a]});keys.forEach(function(k){tot+=by[k]});
   if(!keys.length){$("dChart").innerHTML='<div class="empty">No expenses for this account in '+esc(lbl(cur))+'.</div>';return}
   var R=70,C=2*Math.PI*R,off=0,circles="",leg="";
   keys.forEach(function(k,j){
@@ -335,29 +611,150 @@ function renderDonut(){
     var draw=keys.length>1?Math.max(0,len-1.5):len;
     circles+='<circle cx="100" cy="100" r="'+R+'" fill="none" stroke="'+col+'" stroke-width="28" stroke-dasharray="'+draw+' '+(C-draw)+'" stroke-dashoffset="'+(-off)+'"/>';
     off+=len;
-    leg+='<li><span class="sw" style="background:'+col+'"></span><div class="t">'+esc(k)+'</div><div class="a">'+fmt.format(by[k])+'</div><div class="pc">'+Math.round(frac*100)+'%</div></li>'});
-  $("dChart").innerHTML='<div class="donut"><svg viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Spending by category" style="flex:none"><g transform="rotate(-90 100 100)">'+circles+'</g><text x="100" y="96" text-anchor="middle" style="fill:var(--mute)" font-size="12">Total</text><text x="100" y="118" text-anchor="middle" style="fill:var(--ink)" font-size="18" font-weight="700">'+fmt.format(tot)+'</text></svg><ul class="leg">'+leg+'</ul></div>'}
+    leg+='<li><span class="sw" style="background:'+col+'"></span><div class="t">'+esc(k)+'</div><div class="a">'+eur(by[k])+'</div><div class="pc">'+Math.round(frac*100)+'%</div></li>'});
+  $("dChart").innerHTML='<div class="donut"><svg viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Spending by category" style="flex:none"><g transform="rotate(-90 100 100)">'+circles+'</g><text x="100" y="96" text-anchor="middle" style="fill:var(--mute)" font-size="12">Total</text><text x="100" y="118" text-anchor="middle" style="fill:var(--ink)" font-size="18" font-weight="700">'+eur(tot)+'</text></svg><ul class="leg">'+leg+'</ul></div>'}
+
+/* ---------- categories ---------- */
 function renderCatMgr(){
   if($("cList").contains(document.activeElement))return;
   $("cList").innerHTML=S.cats.map(function(c,i){return'<li><div class="t"><input data-ci="'+i+'" value="'+esc(c)+'" aria-label="Category name"></div>'+(c==="Other"?"":'<button class="ghost" data-cd="'+i+'">Delete</button>')+'</li>'}).join("")}
 function addCat(){var n=$("cNew").value.trim();if(!n){$("cNew").focus();return}
   if(S.cats.some(function(c){return c.toLowerCase()===n.toLowerCase()})){$("cNew").select();return}
-  S.cats.push(n);$("cNew").value="";save();render()}
+  S.cats.push(n);delete S.del["cat:"+n];$("cNew").value="";save();render()}
+function moveCat(from,to){
+  [S.expenses,S.recurring,S.goals].forEach(function(l){l.forEach(function(x){if(x.cat===from){x.cat=to;touch(x)}})});
+  if(S.budgets[from]!=null){if(to!=="Other"||S.budgets.Other==null)setMap("budgets",to,S.budgets[from]);setMap("budgets",from,null)}
+  tomb("cat:"+from)}
+
+/* ---------- twice-to-confirm ---------- */
+var armed=null;
+function twice(t,key,fn){if(armed===key){armed=null;fn()}else{armed=key;var o=t.textContent;t.textContent="Tap again to confirm";setTimeout(function(){if(armed===key){armed=null;t.textContent=o}},4000)}}
+
+/* ---------- events: month & income ---------- */
+$("income").addEventListener("input",function(){var v=parseFloat(this.value);setMap("income",cur,isNaN(v)?null:v);save();render()});
+$("income").addEventListener("blur",render);
+function go(m){cur=m;budSig="";render()}
+$("prev").onclick=function(){go(shift(cur,-1))};
+$("next").onclick=function(){go(shift(cur,1))};
+$("today").onclick=function(){go(ym(new Date()))};
+
+/* ---------- one-off expenses ---------- */
+function resetE(){editE=null;$("eLabel").value="";$("eAmt").value="";$("eRef").checked=false;$("eAdd").textContent="Add expense";$("eCancel").hidden=true}
+$("eAdd").onclick=function(){
+  var a=parseFloat($("eAmt").value),l=$("eLabel").value.trim();
+  if(!l){$("eLabel").focus();return}if(isNaN(a)||a<=0){$("eAmt").focus();return}
+  var dv=$("eDate").value,day=/^\d{4}-\d{2}-\d{2}$/.test(dv)&&dv.slice(0,7)===cur?+dv.slice(8):+defDate().slice(8);
+  var o={label:l,amt:rd($("eRef").checked?-a:a),cat:$("eCat").value,acc:$("eAcc").value,day:day};
+  if(editE){var e=S.expenses.filter(function(x){return x.id===editE})[0];if(e)touch(Object.assign(e,o))}
+  else S.expenses.push(touch(Object.assign({id:uid(),month:cur},o)));
+  var was=!!editE;resetE();save();render();if(!was)$("eLabel").focus()};
+$("eCancel").onclick=function(){resetE();dateFor=null;render()};
+["eLabel","eAmt"].forEach(function(i){$(i).addEventListener("keydown",function(e){if(e.key==="Enter")$("eAdd").click()})});
+
+/* ---------- recurring ---------- */
+function resetR(){editR=null;["rLabel","rAmt","rDay","rDur"].forEach(function(i){$(i).value=""});$("rEvery").value="1";$("rAdd").textContent="Add recurring expense, starting this month";$("rCancel").hidden=true;$("rTitle").textContent="Recurring expenses"}
+$("rAdd").onclick=function(){
+  var a=parseFloat($("rAmt").value),l=$("rLabel").value.trim(),d=parseInt($("rDur").value,10),day=parseInt($("rDay").value,10);
+  if(!l){$("rLabel").focus();return}if(isNaN(a)||a<=0){$("rAmt").focus();return}
+  var o={label:l,amt:rd(a),cat:$("rCat").value,acc:$("rAcc").value,months:d>0?d:null,every:+$("rEvery").value||1,day:day>=1&&day<=31?day:1};
+  if(editR){var r=S.recurring.filter(function(x){return x.id===editR})[0];if(r)touch(Object.assign(r,o))}
+  else S.recurring.push(touch(Object.assign({id:uid(),start:cur},o)));
+  resetR();save();render()};
+$("rCancel").onclick=function(){resetR()};
+
+/* ---------- goals ---------- */
+function resetG(){editG=null;defCat();["gName","gPrice","gDead","gMult"].forEach(function(i){$(i).value=""});$("gAdd").textContent="Add goal";$("gCancel").hidden=true;$("gFormT").textContent="New goal"}
+$("gAdd").onclick=function(){
+  var n=$("gName").value.trim(),pr=parseFloat($("gPrice").value),dl=$("gDead").value.trim(),mu=parseFloat($("gMult").value),a=$("gAcc").value,d=$("gDead");
+  if(!n){$("gName").focus();return}if(isNaN(pr)||pr<=0){$("gPrice").focus();return}
+  if(dl&&!/^\d{4}-(0[1-9]|1[0-2])$/.test(dl)){d.focus();d.setCustomValidity&&d.setCustomValidity("Use the format YYYY-MM, or leave it empty");d.reportValidity&&d.reportValidity();return}
+  d.setCustomValidity&&d.setCustomValidity("");
+  var o={name:n,price:rd(pr),deadline:dl||null,mult:mu>=1?mu:null,acc:a,cat:$("gCat").value};
+  if(editG){var g=goal(editG);if(g)touch(Object.assign(g,o))}
+  else S.goals.push(touch(Object.assign({id:uid()},o)));
+  resetG();save();render()};
+$("gCancel").onclick=function(){resetG()};
+$("ruleX").addEventListener("change",function(){var v=parseFloat(this.value);setMap("settings","mult",v>=1?v:null);save();render()});
+function splitInputs(){return [].slice.call($("sSplit").querySelectorAll("[data-sp]"))}
+$("sEven").onclick=function(){var t=parseFloat($("sAmt").value),ins=splitInputs();if(!(t>0)||!ins.length){$("sAmt").focus();return}
+  var each=Math.floor(t/ins.length*100)/100,rest=rd(t-each*ins.length);ins.forEach(function(i,k){i.value=(k===0?rd(each+rest):each).toFixed(2)})};
+$("sNeed").onclick=function(){var gi=plan(cur).gi.g,tot=0;splitInputs().forEach(function(i){var v=gi[i.getAttribute("data-sp")];var x=v?v.toMove:0;i.value=x>0?x.toFixed(2):"";tot+=x});
+  $("sAmt").value=tot>0?rd(tot).toFixed(2):"";$("sMsg").textContent=tot>0?"":"No goal with a deadline needs money this month."};
+$("sGo").onclick=function(){
+  var m=viewM(),main=mainId(S),from=$("sFrom").value,parts=[],perAcc={};
+  splitInputs().forEach(function(i){var v=parseFloat(i.value),g=goal(i.getAttribute("data-sp"));if(g&&v>0){parts.push({g:g,amt:rd(v)});perAcc[g.acc]=rd((perAcc[g.acc]||0)+v)}});
+  if(!parts.length){$("sMsg").textContent="Type an amount for at least one goal.";return}
+  if(from==="free"){for(var a in perAcc){var fr=freeIn(a,m);if(perAcc[a]>fr+0.004){$("sMsg").textContent="Only "+eur(Math.max(0,fr))+" is free in "+accName(a)+". Lower the amounts or move the money from "+accName(main)+".";return}}}
+  else Object.keys(perAcc).forEach(function(a){if(a!==main)S.xfers.push(touch({id:uid(),from:main,to:a,amt:perAcc[a],month:m}))});
+  parts.forEach(function(x){S.alloc.push(touch({id:uid(),goal:x.g.id,amt:x.amt,month:m}))});
+  $("sMsg").textContent="Added "+eur(sum(parts,function(x){return x.amt}))+": "+parts.map(function(x){return x.g.name+" "+eur(x.amt)}).join(", ")+".";
+  $("sAmt").value="";splitInputs().forEach(function(i){i.value=""});save();render()};
+
+/* ---------- budgets ---------- */
+$("bEdit").onclick=function(){editBud=!editBud;budSig="";render()};
+
+/* ---------- list clicks ---------- */
+document.addEventListener("click",function(ev){
+  var t=ev.target;if(!t.getAttribute)return;var g=function(k){return t.getAttribute(k)};
+  var v;
+  if(v=g("data-e")){S.expenses=S.expenses.filter(function(i){return i.id!==v});tomb(v);if(editE===v)resetE();save();render()}
+  else if(v=g("data-ee")){var e=S.expenses.filter(function(x){return x.id===v})[0];if(!e)return;editE=v;
+    $("eLabel").value=e.label;$("eAmt").value=Math.abs(e.amt);$("eRef").checked=e.amt<0;$("eCat").value=e.cat;$("eAcc").value=acc(e.acc)&&!acc(e.acc).closed?e.acc:mainId(S);$("eDate").value=cur+"-"+pad(e.day||1);
+    $("eAdd").textContent="Save changes";$("eCancel").hidden=false;$("eLabel").focus();$("eLabel").scrollIntoView({block:"center",behavior:"smooth"})}
+  else if(v=g("data-r")){twice(t,"r"+v,function(){S.recurring=S.recurring.filter(function(i){return i.id!==v});tomb(v);if(editR===v)resetR();save();render()})}
+  else if(v=g("data-re")){var r=S.recurring.filter(function(x){return x.id===v})[0];if(!r)return;editR=v;
+    $("rLabel").value=r.label;$("rAmt").value=r.amt;$("rCat").value=r.cat;$("rDay").value=r.day||1;$("rEvery").value=String(r.every||1);$("rDur").value=r.months||"";$("rAcc").value=acc(r.acc)&&!acc(r.acc).closed?r.acc:mainId(S);
+    $("rAdd").textContent="Save changes";$("rCancel").hidden=false;$("rTitle").textContent="Edit “"+r.label+"”";$("rLabel").focus();$("rLabel").scrollIntoView({block:"center",behavior:"smooth"})}
+  else if(v=g("data-s")){var rc=S.recurring.filter(function(i){return i.id===v})[0];if(rc){if(rc.stop)delete rc.stop;else rc.stop=shift(cur,1);touch(rc);save();render()}}
+  else if(v=g("data-p")){var rp=S.recurring.filter(function(i){return i.id===v})[0];if(rp){setMap("paid",cur+":"+v,!isPaid(rp,cur));save();render()}}
+  else if(v=g("data-gm")){var gl=goal(v),inf=plan(cur).gi.g[v];if(gl&&inf&&inf.toMove>0.004){if(gl.acc!==mainId(S))S.xfers.push(touch({id:uid(),from:mainId(S),to:gl.acc,amt:inf.toMove,month:viewM()}));S.alloc.push(touch({id:uid(),goal:v,amt:inf.toMove,month:viewM()}));save();render()}}
+  else if(v=g("data-gb")){twice(t,"gb"+v,function(){var gb=goal(v),m=viewM(),sv=gSaved(v,m);if(!gb)return;
+    S.expenses.push(touch({id:uid(),month:m,day:m===tYM()?tDay():1,label:gb.name,amt:gb.price,cat:gb.cat||"Other",acc:gb.acc,goal:v}));
+    if(sv>0.004)S.alloc.push(touch({id:uid(),goal:v,amt:-sv,month:m}));gb.bought=m;touch(gb);
+    $("sMsg").textContent="Enjoy! "+gb.name+" was paid from "+accName(gb.acc)+(sv-gb.price>0.004?", and the "+eur(sv-gb.price)+" left over is now free money there.":".");save();render()})}
+  else if(v=g("data-gt")){tbFor=tbFor===v?null:v;render();if(tbFor&&$("tbAmt"))$("tbAmt").focus()}
+  else if(v=g("data-gtg")){var tv=parseFloat(($("tbAmt")||{}).value),svd=gSaved(v,viewM());if(!(tv>0)){$("tbAmt").focus();return}
+    S.alloc.push(touch({id:uid(),goal:v,amt:-rd(Math.min(tv,svd)),month:viewM()}));tbFor=null;save();render()}
+  else if(v=g("data-gx")){S.goals=S.goals.filter(function(i){return i.id!==v});tomb(v);save();render()}
+  else if(v=g("data-ge")){var ge=goal(v);if(!ge)return;editG=v;
+    $("gName").value=ge.name;$("gPrice").value=ge.price;$("gDead").value=ge.deadline||"";$("gMult").value=ge.mult||"";$("gCat").value=ge.cat||"Other";$("gAcc").value=acc(ge.acc)&&!acc(ge.acc).closed?ge.acc:mainId(S);
+    $("gAdd").textContent="Save changes";$("gCancel").hidden=false;$("gFormT").textContent="Edit “"+ge.name+"”";$("gName").focus();$("gName").scrollIntoView({block:"center",behavior:"smooth"})}
+  else if(v=g("data-gd")){twice(t,"g"+v,function(){var gd=goal(v),sv=gSaved(v,viewM());S.goals=S.goals.filter(function(i){return i.id!==v});tomb(v);
+    S.alloc=S.alloc.filter(function(a){if(a.goal===v){tomb(a.id);return false}return true});if(editG===v)resetG();
+    $("sMsg").textContent=gd?gd.name+" deleted."+(sv>0.004?" Its "+eur(sv)+" is now free money in "+accName(gd.acc)+".":""):"";save();render()})}
+  else if(v=g("data-xd")){S.xfers=S.xfers.filter(function(i){return i.id!==v});tomb(v);save();render()}
+  else if(v=g("data-jd")){S.adj=S.adj.filter(function(i){return i.id!==v});tomb(v);save();render()}
+  else if(v=g("data-ad")){if(v!==mainId(S))twice(t,"del"+v,function(){removeAcc(v);save();render()})}
+  else if((v=g("data-cd"))!=null){twice(t,"cd"+v,function(){
+    var name=S.cats[+v];if(S.cats.indexOf("Other")<0)S.cats.push("Other");moveCat(name,"Other");S.cats.splice(S.cats.indexOf(name),1);save();render()})}
+});
+document.addEventListener("change",function(ev){
+  var t=ev.target;if(!t.getAttribute)return;
+  var id=t.getAttribute("data-ai"),bc=t.getAttribute("data-bud"),ci=t.getAttribute("data-ci");
+  if(id){var a=acc(id),f=t.getAttribute("data-f");if(!a)return;
+    if(f==="name"){a.name=t.value.trim()||a.name;touch(a);save();render();return}
+    var bm=viewM(),c=bal(S,id,bm),val=parseFloat(t.value);
+    if(!isNaN(val)){var diff=rd(val-c);if(Math.abs(diff)>=0.005){S.adj.push(touch({id:uid(),acc:id,month:bm,amt:diff,note:"Balance set by hand"}));save()}}
+    render();t.value=bal(S,id,bm).toFixed(2);return}
+  if(bc!=null){var bv=parseFloat(t.value);setMap("budgets",bc,isNaN(bv)||bv<=0?null:rd(bv));save();render();return}
+  if(ci!=null){var i=+ci,old=S.cats[i],n=t.value.trim();
+    if(!n||n===old||S.cats.some(function(c,j){return j!==i&&c.toLowerCase()===n.toLowerCase()})){t.value=old;return}
+    moveCat(old,n);delete S.del["cat:"+n];S.cats[i]=n;save();render()}
+});
+$("mGo").onclick=function(){
+  var a=parseFloat($("mAmt").value),f=$("mFrom").value,to=$("mTo").value;
+  if(!acc(f)||!acc(to)||f===to||isNaN(a)||a<=0){$("mAmt").focus();return}
+  S.xfers.push(touch({id:uid(),from:f,to:to,amt:rd(a),month:viewM()}));$("mAmt").value="";save();render()};
+$("aAdd").onclick=function(){
+  var n=$("aName").value.trim(),b=parseFloat($("aBal").value);if(!n){$("aName").focus();return}
+  var id=uid();S.accounts.push(touch({id:id,name:n}));
+  if(!isNaN(b)&&b!==0)S.adj.push(touch({id:uid(),acc:id,month:viewM(),amt:rd(b),note:"Starting balance"}));
+  $("aName").value="";$("aBal").value="";save();render()};
+$("dAcc").onchange=renderDonut;
 $("cAdd").onclick=addCat;
 $("cNew").addEventListener("keydown",function(e){if(e.key==="Enter")addCat()});
-document.addEventListener("change",function(e){
-  var t=e.target,ci=t.getAttribute&&t.getAttribute("data-ci");if(ci==null)return;
-  var i=+ci,old=S.cats[i],n=t.value.trim();
-  if(!n||n===old||S.cats.some(function(c,j){return j!==i&&c.toLowerCase()===n.toLowerCase()})){t.value=old;return}
-  S.expenses.forEach(function(x){if(x.cat===old)x.cat=n});S.recurring.forEach(function(x){if(x.cat===old)x.cat=n});
-  S.cats[i]=n;save();render()});
-document.addEventListener("click",function(e){
-  var t=e.target,cd=t.getAttribute&&t.getAttribute("data-cd");if(cd==null)return;
-  twice(t,"cd"+cd,function(){
-    var name=S.cats[+cd];if(S.cats.indexOf("Other")<0)S.cats.push("Other");
-    S.expenses.forEach(function(x){if(x.cat===name)x.cat="Other"});S.recurring.forEach(function(x){if(x.cat===name)x.cat="Other"});
-    S.cats.splice(+cd,1);save();render()})});
 
+/* ---------- export / import ---------- */
 function stamp(){return new Date().toISOString().slice(0,10)}
 function msg(t){$("dataMsg").textContent=t}
 function browserDl(name,text){
@@ -370,45 +767,45 @@ function dl(name,text){
     return d.save({filename:name,data:text}).then(function(){msg("File saved.")},function(e){if(e&&e.code==="declined"){msg("Download cancelled.")}else{$("dataBox").value=text;msg("Download failed. Copy the text below instead.")}})
   }).catch(function(){$("dataBox").value=text;msg("Copy the text below instead.")})}
 function csv(){
-  var rows=[["Month","Type","Name","Category","Amount","Account"]],ms=[];
+  var rows=[["Month","Day","Type","Name","Category","Amount","Account"]],ms=[];
   S.expenses.forEach(function(e){ms.push(e.month)});S.recurring.forEach(function(x){ms.push(x.start)});Object.keys(S.income).forEach(function(k){ms.push(k)});
   if(ms.length){ms.sort();var m=ms[0],end=ms[ms.length-1],t=ym(new Date());if(idx(t)>idx(end))end=t;
     for(;idx(m)<=idx(end);m=shift(m,1)){
-      if(S.income[m]!=null)rows.push([m,"Income","","",S.income[m],""]);
-      S.recurring.forEach(function(x){if(active(x,m))rows.push([m,"Recurring",x.label,x.cat,x.amt,accName(x.acc)])});
-      S.expenses.forEach(function(x){if(x.month===m)rows.push([m,"One-off",x.label,x.cat,x.amt,accName(x.acc)])})}}
-  return rows.map(function(r){return r.map(function(c,i){c=String(c);if(i===4&&c!=="Amount")c=c.replace(".",",");return/[";\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(";")}).join("\n")}
+      if(S.income[m]!=null)rows.push([m,"","Income","","",S.income[m],""]);
+      S.recurring.forEach(function(x){if(active(x,m))rows.push([m,x.day||1,"Recurring",x.label,x.cat,x.amt,accName(x.acc)])});
+      S.expenses.forEach(function(x){if(x.month===m)rows.push([m,x.day||"",x.amt<0?"Refund":"One-off",x.label,x.cat,x.amt,accName(x.acc)])})}}
+  return rows.map(function(r){return r.map(function(c,i){c=String(c);if(i===5&&c!=="Amount")c=c.replace(".",",");return/[";\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(";")}).join("\n")}
 $("xJson").onclick=function(){dl("budget-"+stamp()+".json",JSON.stringify(S,null,1))};
 $("xCsv").onclick=function(){dl("budget-"+stamp()+".csv",csv())};
-function imp(text){try{var d=JSON.parse(text);if(!d||!d.expenses||!d.recurring)throw 0;S=norm(d);save();render();msg("Data imported.")}catch(e){msg("That doesn’t look like a budget export.")}}
-$("impFile").onchange=function(){var f=this.files[0];if(!f)return;var rd2=new FileReader();rd2.onload=function(){imp(rd2.result)};rd2.readAsText(f);this.value=""};
+function imp(text){try{var d=JSON.parse(text);if(!d||!d.expenses||!d.recurring)throw 0;S=norm(d);aSig="";budSig="";save();render();msg("Data imported.")}catch(e){msg("That doesn’t look like a budget export.")}}
+$("impFile").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){imp(r.result)};r.readAsText(f);this.value=""};
 $("impPaste").onclick=function(){imp($("dataBox").value)};
+
+/* ---------- clean-up ---------- */
 function purgeInfo(x){var c=shift(ym(new Date()),-x),below=Object.keys(S.income).sort().filter(function(k){return idx(k)<idx(c)}),n=Math.max(0,below.length-1);
   S.expenses.forEach(function(e){if(idx(e.month)<idx(c))n++});
-  S.recurring.forEach(function(q){var last=q.stop?shift(q.stop,-1):(q.months?shift(q.start,q.months-1):null);if(last&&idx(last)<idx(c))n++});
-  return{c:c,n:n,below:below}}
-function oldCount(x){return purgeInfo(x).n}
+  S.recurring.forEach(function(q){var l=lastMonth(q);if(l&&idx(l)<idx(c))n++});
+  return{c:c,n:n}}
 function updPurge(){var x=parseInt($("pN").value,10);if(!(x>=1)){$("pInfo").textContent="Enter a number of months (1 or more).";return}
-  var n=oldCount(x);$("pInfo").textContent=n?n+" entries older than "+x+" months would be deleted.":"Nothing is older than "+x+" months yet, so nothing would be deleted."}
+  var n=purgeInfo(x).n;$("pInfo").textContent=n?n+" entries older than "+x+" months would be deleted.":"Nothing is older than "+x+" months yet, so nothing would be deleted."}
 $("pN").oninput=updPurge;
 $("pGo").onclick=function(){
-  var x=parseInt($("pN").value,10);if(!(x>=1)||!oldCount(x)){updPurge();return}
+  var x=parseInt($("pN").value,10);if(!(x>=1)||!purgeInfo(x).n){updPurge();return}
   twice(this,"purge",function(){
     var info=purgeInfo(x),c=info.c;
     if(idx(S.since)<idx(c)){
       var carry=S.accounts.map(function(a){return{id:a.id,b:bal(S,a.id,shift(c,-1))}});
       S.adj=S.adj.filter(function(j){return idx(j.month)>=idx(c)});S.xfers=S.xfers.filter(function(j){return idx(j.month)>=idx(c)});
-      carry.forEach(function(o){if(Math.abs(o.b)>=0.005)S.adj.push({id:uid(),acc:o.id,month:c,amt:o.b,note:"Balance carried forward"})});S.since=c}
-    info.below.slice(0,-1).forEach(function(k){delete S.income[k]});
-    S.expenses=S.expenses.filter(function(e){return idx(e.month)>=idx(c)});
-    S.recurring=S.recurring.filter(function(q){var last=q.stop?shift(q.stop,-1):(q.months?shift(q.start,q.months-1):null);return !last||idx(last)>=idx(c)});
+      carry.forEach(function(o){if(Math.abs(o.b)>=0.005)S.adj.push(touch({id:uid(),acc:o.id,month:c,amt:o.b,note:"Balance carried forward"}))});S.since=c}
+    var gc={};S.alloc.forEach(function(a){if(idx(a.month)<idx(c))gc[a.goal]=(gc[a.goal]||0)+a.amt});
+    S.alloc=S.alloc.filter(function(a){return idx(a.month)>=idx(c)});
+    Object.keys(gc).forEach(function(id){if(Math.abs(gc[id])>=0.005&&goal(id))S.alloc.push(touch({id:uid(),goal:id,amt:rd(gc[id]),month:c}))});
+    filterOld(S,c);
     save();render();$("pGo").textContent="Delete old data";$("pInfo").textContent="Removed "+info.n+" old entries. Account balances were carried forward."})};
 
+/* ---------- GitHub sync ---------- */
 var GH_KEY="budget-gh",gh=null,ghSha=null,ghBusy=false,ghAgain=false,ghTimer=null;
 try{gh=JSON.parse(localStorage.getItem(GH_KEY))}catch(e){gh=null}
-function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function hasData(){return S.expenses.length>0||S.recurring.length>0||Object.keys(S.income).length>0||S.adj.length>0||S.xfers.length>0}
-function adopt(d){S=norm(d);S.updated=d.updated||0;saveLocal();aSig="";render()}
 function b64e(t){return btoa(unescape(encodeURIComponent(t)))}
 function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,""))))}
 function ghUrl(p){return"https://api.github.com/repos/"+gh.repo+(p||"")}
@@ -435,10 +832,11 @@ async function ghSync(){
   ghBusy=true;ghAgain=false;status("Syncing with GitHub…");
   try{
     for(var n=0;n<2;n++){
-      var r=await ghGet(),ru=r.none?-1:(r.data.updated||0);
-      if(r.none||ru<(S.updated||0)){try{await ghPut(r.none?null:r.sha)}catch(e){if((e.code===409||e.code===422)&&n===0)continue;throw e}}
-      else if(ru>(S.updated||0)){adopt(r.data);ghSha=r.sha}
-      else ghSha=r.sha;
+      var r=await ghGet();
+      try{
+        if(r.none){await ghPut(null)}
+        else{var rr=reconcile(r.data);if(rr.changed)push();if(canon(S)!==canon(rr.remote))await ghPut(r.sha);else ghSha=r.sha}
+      }catch(e){if((e.code===409||e.code===422)&&n===0)continue;throw e}
       break}
     ghDone()
   }catch(e){status(ghMsg(e))}
@@ -452,9 +850,9 @@ $("ghGo").onclick=async function(){
   try{
     var r=await ghGet();
     if(r.none){await ghPut(null)}
-    else if(!hasData()){adopt(r.data);ghSha=r.sha}
+    else if(!hasData()){adopt(norm(r.data));ghSha=r.sha}
     else if((r.data.updated||0)!==(S.updated||0)){
-      if(confirm("GitHub already holds a saved budget (last changed "+new Date(r.data.updated||0).toLocaleString()+").\n\nOK = use GitHub’s version on this device.\nCancel = replace GitHub’s version with the data on this device.")){adopt(r.data);ghSha=r.sha}
+      if(confirm("GitHub already holds a saved budget (last changed "+new Date(r.data.updated||0).toLocaleString()+").\n\nOK = use GitHub’s version on this device.\nCancel = replace GitHub’s version with the data on this device.")){adopt(norm(r.data));ghSha=r.sha}
       else{S.updated=Date.now();saveLocal();await ghPut(r.sha)}}
     else ghSha=r.sha;
     try{localStorage.setItem(GH_KEY,JSON.stringify(gh))}catch(e){}
@@ -462,23 +860,33 @@ $("ghGo").onclick=async function(){
   }catch(e){gh=prev;status(ghMsg(e))}};
 $("ghNow").onclick=function(){ghSync()};
 $("ghOff").onclick=function(){twice(this,"ghoff",function(){gh=null;clearTimeout(ghTimer);try{localStorage.removeItem(GH_KEY)}catch(e){}ghUI();$("ghOff").textContent="Disconnect this device";status("Disconnected. Your data stays on this device.")})};
-document.addEventListener("visibilitychange",function(){if(!document.hidden&&gh)ghSync()});
 
+/* ---------- claude.ai account sync ---------- */
+var ref=null,timer=null;
 function status(t){$("sync").textContent=t}
 function push(){if(!ref)return;clearTimeout(timer);timer=setTimeout(function(){ref.set({json:JSON.stringify(S),updated:S.updated}).then(function(){status("Synced to your claude.ai account.")},function(){status("Sync failed. Data is kept on this device.")})},700)}
+async function dbPull(){
+  if(!ref)return;
+  var snap=await ref.get();
+  if(!snap.exists){S.updated=S.updated||Date.now();push();return}
+  var d=snap.data(),raw=JSON.parse(d.json);raw.updated=d.updated||raw.updated;
+  var rr=reconcile(raw);if(rr.changed)ghQueue();if(canon(S)!==canon(rr.remote))push();
+  status("Synced to your claude.ai account.")}
 (async function(){
   try{
-    if(!(window.claude&&claude.use)){status("Data is stored in this browser only. Export a JSON backup regularly, and use it to move your data to another device.");return}
+    if(!(window.claude&&claude.use)){if(!gh)status("Data is stored in this browser only. Export a JSON backup regularly, or connect GitHub to share it between devices.");return}
     var user=await claude.use("user"),db=await claude.use("db");
     if(!user||!db){status("Stored on this device only. Open the page signed in to claude.ai to sync.");return}
-    var id=await user.id();ref=db.collection("data/users/"+id).doc("budget");
-    var snap=await ref.get();
-    if(snap.exists){var d=snap.data();if((d.updated||0)>(S.updated||0)){S=norm(JSON.parse(d.json));S.updated=d.updated;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();status("Synced to your claude.ai account.");return}}
-    S.updated=S.updated||Date.now();push();status("Synced to your claude.ai account.");
+    var id=await user.id();if(!id){status("Stored on this device only.");return}
+    ref=db.collection("data/users/"+id).doc("budget");
+    await dbPull();
   }catch(e){status("Stored on this device only.")}
 })();
+document.addEventListener("visibilitychange",function(){if(document.hidden)return;if(gh)ghSync();if(ref)dbPull().catch(function(){});render()});
+
+function defCat(){var c=S.cats.indexOf("Leisure")>=0?"Leisure":"Other";if(S.cats.indexOf(c)>=0)$("gCat").value=c}
 $("ver").textContent=VERSION;
-render();ghUI();if(gh)ghSync();
+render();defCat();ghUI();if(gh)ghSync();
 })();
 </script>
 </body>
