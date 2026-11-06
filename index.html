@@ -298,7 +298,7 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 
 <script>
 (function(){
-var VERSION="3.0",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
+var VERSION="3.1",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
 var ARR=["expenses","recurring","xfers","adj","goals","accounts","alloc"],MAPS=["income","budgets","paid","settings","toSpend"];
 var FREQ={1:"every month",2:"every 2 months",3:"every 3 months",6:"every 6 months",12:"every year"};
 var fmt=new Intl.NumberFormat("en-GB",{style:"currency",currency:"EUR"});
@@ -613,7 +613,9 @@ function renderGoals(p){
     if(i.late)s+=' <span class="neg">The deadline has passed.</span>';
     else if(g.deadline&&i.need>0&&i.state!=="ready")s+=" Put aside "+eur(i.need)+" a month to be ready by "+lbl(g.deadline)+(i.moved>0.004?" ("+eur(i.moved)+" added this month).":".");
     else if(!g.deadline&&i.state!=="ready")s+=" No deadline, so it isn’t part of the monthly plan.";
-    if(i.toMove>0.004&&st!=="past"&&acc(g.acc))btns+='<button class="primary sm" data-gm="'+g.id+'">Add '+eur(i.toMove)+(g.acc!==main?" from Main":"")+'</button>';
+    if(i.toMove>0.004&&st!=="past"&&acc(g.acc)){var fr=freeIn(g.acc,m),amt=rd(Math.min(i.toMove,Math.max(0,fr))),an=accName(g.acc);
+      if(amt>0.004)btns+='<button class="primary sm" data-gm="'+g.id+'">Add '+eur(amt)+' from free money in '+esc(an)+'</button>';
+      if(amt<i.toMove-0.004)s+=' <span class="neg">'+(amt>0.004?'Only '+eur(amt)+' of the '+eur(i.toMove)+' needed is free in '+esc(an)+'.':'Still '+eur(i.toMove)+' needed this month, but there’s no free money in '+esc(an)+'.')+' Send your savings from '+esc(accName(main))+' on Home first.</span>'}
     if(i.state==="ready")btns+='<button class="primary sm" data-gb="'+g.id+'">I bought it</button>';
     if(i.saved>0.004)btns+='<button class="ghost" data-gt="'+g.id+'">Take back</button>';
     btns+='<button class="ghost" data-ge="'+g.id+'">Edit</button><button class="ghost" data-gd="'+g.id+'">Delete</button>';
@@ -829,7 +831,8 @@ document.addEventListener("click",function(ev){
     $("rAdd").textContent="Save changes";$("rCancel").hidden=false;$("rTitle").textContent="Edit “"+r.label+"”";$("rLabel").focus();$("rLabel").scrollIntoView({block:"center",behavior:"smooth"})}
   else if(v=g("data-s")){var rc=S.recurring.filter(function(i){return i.id===v})[0];if(rc){if(rc.stop)delete rc.stop;else rc.stop=shift(cur,1);touch(rc);save();render()}}
   else if(v=g("data-p")){var rp=S.recurring.filter(function(i){return i.id===v})[0];if(rp){setMap("paid",cur+":"+v,!isPaid(rp,cur));save();render()}}
-  else if(v=g("data-gm")){var gl=goal(v),inf=plan(cur).gi.g[v];if(gl&&inf&&inf.toMove>0.004){if(gl.acc!==mainId(S))S.xfers.push(touch({id:uid(),from:mainId(S),to:gl.acc,amt:inf.toMove,month:viewM()}));S.alloc.push(touch({id:uid(),goal:v,amt:inf.toMove,month:viewM()}));save();render()}}
+  else if(v=g("data-gm")){var gl=goal(v),inf=plan(cur).gi.g[v];if(gl&&inf&&inf.toMove>0.004){var ga=rd(Math.min(inf.toMove,Math.max(0,freeIn(gl.acc,viewM()))));
+    if(ga>0.004){S.alloc.push(touch({id:uid(),goal:v,amt:ga,month:viewM()}));$("sMsg").textContent=eur(ga)+" of free money in "+accName(gl.acc)+" is now kept for "+gl.name+".";save();render()}}}
   else if(v=g("data-gb")){twice(t,"gb"+v,function(){var gb=goal(v),m=viewM(),sv=gSaved(v,m);if(!gb)return;
     S.expenses.push(touch({id:uid(),month:m,day:m===tYM()?tDay():1,label:gb.name,amt:gb.price,cat:gb.cat||"Other",acc:gb.acc,goal:v}));
     if(sv>0.004)S.alloc.push(touch({id:uid(),goal:v,amt:-sv,month:m}));gb.bought=m;touch(gb);
