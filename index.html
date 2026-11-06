@@ -111,6 +111,28 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 
 <div class="view" data-view="home">
 <div class="quick"><button class="primary" data-go="spending" data-focus="eLabel">Add an expense</button><button data-go="savings" data-focus="sAmt">Add savings</button></div>
+<section class="card">
+  <h2 id="dTitle">Daily spending allowance</h2>
+  <div class="lbl" id="dLbl"></div>
+  <div class="big2" id="dVal"></div>
+  <div class="tiles" id="dTiles" hidden></div>
+  <div class="hint" id="dSub"></div>
+  <div class="track" id="dTrack"><div class="fill" id="dBar"></div></div>
+  <div class="hint" id="dBarTxt"></div>
+  <ul class="calc" id="dCalc"></ul>
+  <div class="hint notes" id="dWarn"></div>
+</section>
+<section class="card">
+  <h2 id="mTitle">Main account this month</h2>
+  <div class="lbl" id="mLbl"></div>
+  <div class="big2" id="mVal"></div>
+  <div class="hint" id="mSub"></div>
+  <ul class="calc" id="mCalc"></ul>
+  <div class="row" style="margin-top:10px"><label for="mSpend" class="grow" id="mSpendL" style="font-size:14px">To send to Boursorama this month</label><input id="mSpend" type="number" inputmode="decimal" min="0" step="1" style="max-width:130px"></div>
+  <p class="hint" id="mSugg"></p>
+  <div class="quick" id="mBtns" style="margin:10px 0 0"></div>
+  <div class="hint notes" id="mNotes"></div>
+</section>
 <section class="card hero">
   <div class="lbl" id="heroLbl"></div>
   <div class="big" id="heroVal"></div>
@@ -123,17 +145,6 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
     <div><span id="sDueL">Bills still to pay</span><b id="sDue"></b></div>
   </div>
   <div class="hint notes" id="heroNotes"></div>
-</section>
-<section class="card">
-  <h2>Daily spending allowance</h2>
-  <div class="lbl" id="dLbl"></div>
-  <div class="big2" id="dVal"></div>
-  <div class="tiles" id="dTiles" hidden></div>
-  <div class="hint" id="dSub"></div>
-  <div class="track" id="dTrack"><div class="fill" id="dBar"></div></div>
-  <div class="hint" id="dBarTxt"></div>
-  <ul class="calc" id="dCalc"></ul>
-  <div class="hint notes" id="dWarn"></div>
 </section>
 <section class="card">
   <h2>Money received this month</h2>
@@ -215,13 +226,14 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
     <select id="gAcc" class="full" aria-label="Account the money is saved in"></select>
     <div class="row full"><button class="primary grow" id="gAdd">Add goal</button><button id="gCancel" hidden>Cancel</button></div>
   </div>
-  <p class="hint">The deadline is optional. With one, the goal’s monthly amount comes out of your daily allowance. When you buy it, the purchase is paid from the goal and doesn’t count as day-to-day spending; whatever is left over becomes free money in the account.</p>
+  <p class="hint">The deadline is optional. With one, its monthly amount is kept in the savings you send from Main, before the spending suggestion is worked out. When you buy it, the purchase is paid from the goal and doesn’t count as day-to-day spending; whatever is left over becomes free money in the account.</p>
 </section>
 </div>
 
 <div class="view" data-view="accounts">
 <section class="card">
-  <h2 id="aTitle">Accounts</h2>
+  <div class="tiles" id="aTiles" style="margin-top:0"></div>
+  <h2 id="aTitle" style="margin-top:12px">Accounts</h2>
   <ul id="aList"></ul>
   <div class="row" style="justify-content:space-between;margin:8px 0"><b>Total</b><b id="aTot"></b></div>
   <p class="hint" id="aHint"></p>
@@ -236,6 +248,17 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 </div>
 
 <div class="view" data-view="more">
+<section class="card">
+  <h2>How you use your accounts</h2>
+  <div class="form">
+    <label class="hint full" for="setSp">Spending account (the daily amount comes from it)</label>
+    <select id="setSp" class="full"></select>
+    <label class="hint full" for="setSv">Savings account (where your monthly savings go)</label>
+    <select id="setSv" class="full"></select>
+    <label class="hint full" for="setCu">Cushion always kept in Main, for unplanned expenses</label>
+    <input id="setCu" class="full" type="number" inputmode="decimal" min="0" step="1" placeholder="0">
+  </div>
+</section>
 <section class="card">
   <h2>Expense categories</h2>
   <ul id="cList"></ul>
@@ -275,8 +298,8 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 
 <script>
 (function(){
-var VERSION="2.4",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
-var ARR=["expenses","recurring","xfers","adj","goals","accounts","alloc"],MAPS=["income","budgets","paid","settings"];
+var VERSION="3.0",KEY="budget-v1",CATS=["Housing","Food","Transport","Subscriptions","Health","Leisure","Shopping","Other"];
+var ARR=["expenses","recurring","xfers","adj","goals","accounts","alloc"],MAPS=["income","budgets","paid","settings","toSpend"];
 var FREQ={1:"every month",2:"every 2 months",3:"every 3 months",6:"every 6 months",12:"every year"};
 var fmt=new Intl.NumberFormat("en-GB",{style:"currency",currency:"EUR"});
 var S=load(),cur=ym(new Date());
@@ -335,7 +358,7 @@ function norm(d){var fresh=!(d&&d.expenses&&d.recurring);if(fresh)d={income:{},e
   d.recurring.forEach(function(r){r.every=+r.every||1;r.day=+r.day||1});
   if(!(d.v>=2)){d.v=2;d.since=ym(new Date());
     d.accounts.forEach(function(a){var amt=rd((+a.bal||0)-bal(d,a.id,d.since));if(Math.abs(amt)>=0.005)d.adj.push({id:uid(),acc:a.id,month:d.since,amt:amt,note:"Starting balance"})})}
-  if(!d.settings)d.settings={};
+  if(!d.settings)d.settings={};if(!d.toSpend)d.toSpend={};
   if(!d.alloc){d.alloc=[];
     /* v2.0 goals filled themselves from the account balance: turn that into explicit shares once (fixed ids so two devices agree) */
     var M=idx(ym(new Date()))<idx(d.since)?d.since:ym(new Date()),by={};
@@ -439,7 +462,8 @@ function render(){
   if(document.activeElement!==$("income"))$("income").value=S.income[cur]!=null?S.income[cur]:(inc.inh?inc.v:"");
   $("incHint").textContent=S.income[cur]==null&&inc.inh?"Carried over from "+lbl(inc.inh,true)+". Edit to confirm.":"";
   var p=plan(cur);
-  renderHero(p);renderDaily(p);renderOnes(p);renderGoals(p);renderBudgets(p);renderRec();renderAccounts();
+  var f=flow(cur,p);
+  renderHero(p);renderDaily(p,f);renderMain(p,f);renderAccTiles(p,f);renderRoles();renderOnes(p);renderGoals(p);renderBudgets(p);renderRec();renderAccounts();
 }
 
 function renderHero(p){
@@ -459,54 +483,110 @@ function renderHero(p){
   else{$("sDueL").textContent="Bills this month ("+p.recs.length+")";$("sDue").textContent=eur(p.bills)}
   var notes=[];
   if(st==="now"&&tDay()>=5&&p.spent>0){var pace=p.spent/tDay()*dim(cur);notes.push("At your current pace, day-to-day spending would reach about "+eur(pace)+", leaving "+eur(p.inc-p.bills-pace)+".")}
-  if(!hasBud&&st!=="past")notes.push("Set budgets by category in Spending so this forecast also counts the spending still to come.");
+  if(!hasBud&&st!=="past")notes.push("Set budgets by category in Spending so this forecast also counts the spending still to come, and the spending suggestion follows them.");
   p.big.forEach(function(r){notes.push("Includes "+esc(r.label)+" ("+eur(r.amt)+", "+freq(r)+"). Use the money set aside for it in earlier months.")});
   if(p.fromGoals.length)notes.push(eur(sum(p.fromGoals,function(e){return e.amt}))+" paid from savings goals ("+p.fromGoals.map(function(e){return esc(e.label)}).join(", ")+") isn’t counted here: it came from money you’d already saved.");
   if(!ledger)notes.push("Account balances are tracked from "+lbl(S.since)+".");
   $("heroNotes").innerHTML=notes.map(function(n){return"<p>"+n+"</p>"}).join("");
 }
 
-function renderDaily(p){
-  var st=p.st,D=dim(cur),hasGoals=S.goals.length>0;
-  var lines=[["Money received",p.inc],["Monthly bills",-p.mBills]];
-  if(p.prov>0.004)lines.push(["Set aside for bills that aren’t monthly",-p.prov]);
-  if(hasGoals)lines.push(["Savings goals",-p.gi.need]);
-  $("dCalc").innerHTML=lines.map(function(l){return'<li><div class="t">'+l[0]+'</div><div class="a">'+sg(l[1])+'</div></li>'}).join("")+'<li class="tot"><div class="t">For day-to-day spending</div><div class="a">'+eur(p.allowed)+'</div></li>';
-  var showBar=true,cls="pos",tiles=false;
-  if(p.allowed<0){
-    $("dLbl").textContent="Your bills and goals need more than your income";
-    $("dVal").textContent=eur(-p.allowed)+" short";cls="neg";showBar=false;
-    $("dSub").textContent="Push back a goal’s deadline, lower a target or cut a bill to get a daily allowance back.";
-    $("dBarTxt").textContent="";
-  }else if(st==="now"){
-    var td=tDay(),left=D-td+1,todaySp=sum(p.ones.filter(function(e){return e.day===td}),function(e){return e.amt});
-    var rem=p.allowed-(p.spent-todaySp),per=rem/left,leftToday=per-todaySp;
-    if(rem<=0){$("dLbl").textContent="This month’s day-to-day money is used up";$("dVal").textContent=eur(0)+" a day";cls="neg";
-      $("dSub").textContent="You’re "+eur(-rem)+" over"+(hasGoals?", so your goals will get less this month unless you cut back.":".")}
+function spendId(){var v=S.settings.spendAcc,a=acc(v);if(a&&!a.closed&&v!==mainId(S))return v;var b=openAccts().filter(function(x){return /bourso/i.test(x.name)})[0];return b?b.id:null}
+function saveId(){var v=S.settings.saveAcc,a=acc(v);if(a&&!a.closed&&v!==mainId(S))return v;var b=openAccts().filter(function(x){return /livret|saving|épargne/i.test(x.name)})[0];return b?b.id:null}
+function cushion(){return Math.max(0,+S.settings.cushion||0)}
+function sentTo(from,to,m){return rd(sum(S.xfers.filter(function(x){return x.month===m&&x.from===from&&x.to===to}),function(x){return x.amt}))}
+/* The month's money flow: Main pays the bills, sends spending money to the spending account, and the rest is saved. */
+function flow(m,p){
+  var main=mainId(S),sp=spendId(),sv=saveId(),st=mstate(m),cu=cushion();
+  var sentSp=sp?sentTo(main,sp,m):0,sentSv=sv?sentTo(main,sv,m):0;
+  var base=rd(bal(S,main,m)+sentSp+sentSv);
+  var spBills=sp?rd(sum(p.recs.filter(function(r){return resolveIn(S,r.acc)===sp}),function(r){return r.amt})):0;
+  var spStart=sp?bal(S,sp,shift(m,-1)):0;
+  var spendable=rd(base-cu-p.prov-p.gi.need),sugg=Math.max(0,rd(spendable-Math.max(0,spStart))),byBud=false;
+  if(p.budTot>0){var need=Math.max(0,rd(p.budTot+spBills-Math.max(0,spStart)));if(need<sugg){sugg=need;byBud=true}}
+  sugg=Math.floor(sugg);
+  var set=S.toSpend[m]!=null,planned=set?+S.toSpend[m]:(st==="past"?sentSp:sugg),send=Math.max(planned,sentSp);
+  var pending=rd(Math.max(0,planned-sentSp)),toSave=rd(base-cu-send-sentSv);
+  var mainUnpaid=rd(sum(p.unpaid.filter(function(r){return resolveIn(S,r.acc)===main}),function(r){return r.amt}));
+  return{main:main,sp:sp,sv:sv,st:st,cu:cu,sentSp:sentSp,sentSv:sentSv,base:base,spBills:spBills,spStart:spStart,sugg:sugg,byBud:byBud,set:set,planned:planned,send:send,pending:pending,toSave:toSave,mainUnpaid:mainUnpaid}}
+
+function renderDaily(p,f){
+  var st=p.st,D=dim(cur),sp=f.sp,showBar=true,cls="pos",tiles=false;
+  $("dTitle").textContent=sp?"Daily spending ("+accName(sp)+")":"Daily spending allowance";
+  if(!sp){$("dLbl").textContent="Choose your spending account";$("dVal").textContent="";$("dSub").textContent="Go to More → How you use your accounts, and pick the account you spend from (Boursorama).";
+    $("dCalc").innerHTML="";$("dWarn").innerHTML="";$("dTrack").hidden=true;$("dBarTxt").textContent="";$("dVal").hidden=false;$("dTiles").hidden=true;return}
+  var nm=accName(sp),spOnes=p.ones.filter(function(e){return resolveIn(S,e.acc)===sp}),spent=rd(sum(spOnes,function(e){return e.amt}));
+  var balEnd=bal(S,sp,cur),unpaid=rd(sum(p.unpaid.filter(function(r){return resolveIn(S,r.acc)===sp}),function(r){return r.amt}));
+  var leftMonth=rd(balEnd+f.pending),dayMoney=rd(leftMonth+spent);
+  var lines=[[nm+" now",rd(balEnd+unpaid)]];
+  if(unpaid>0.004)lines.push(["Bills still due from it",-unpaid]);
+  if(f.pending>0.004&&st!=="past")lines.push(["Still to send from "+accName(f.main),f.pending]);
+  $("dCalc").innerHTML=lines.map(function(l){return'<li><div class="t">'+esc(l[0])+'</div><div class="a">'+(l===lines[0]?eur(l[1]):sg(l[1]))+'</div></li>'}).join("")+'<li class="tot"><div class="t">Left to spend this month</div><div class="a">'+eur(leftMonth)+'</div></li>';
+  if(st==="now"){
+    var td=tDay(),left=D-td+1,todaySp=rd(sum(spOnes.filter(function(e){return e.day===td}),function(e){return e.amt}));
+    var avail=rd(leftMonth+todaySp),per=avail/left,leftToday=per-todaySp;
+    if(avail<=0.004){$("dLbl").textContent=nm+" is empty for this month";$("dVal").textContent=eur(0)+" a day";cls="neg";
+      $("dSub").textContent=leftMonth<-0.004?"You’re "+eur(-leftMonth)+" over. Only move more from "+accName(f.main)+" if your savings allow it.":"Nothing left to spend until next month."}
     else{var over=leftToday<-0.004;tiles=true;$("dLbl").textContent="Today";
       $("dTiles").innerHTML='<div class="tile"><div class="k">You can spend per day</div><div class="v pos">'+eur(per)+'</div><div class="s">for the '+left+' day'+(left>1?'s':'')+' left, today included</div></div>'
         +'<div class="tile"><div class="k">'+(over?'Over today’s amount':'Left to spend today')+'</div><div class="v '+(over?'neg':'pos')+'">'+eur(Math.abs(leftToday))+'</div><div class="s">'+eur(todaySp)+' spent today</div></div>';
-      $("dSub").textContent=eur(rem-todaySp)+" left for the rest of "+lbl(cur).split(" ")[0]+"."+(over?" Today’s extra is spread over the coming days, so tomorrow’s amount is a little lower.":"")}
-    $("dBarTxt").textContent=eur(p.spent)+" of "+eur(p.allowed)+" day-to-day money used.";
+      $("dSub").textContent=eur(leftMonth)+" left in "+nm+" for the rest of "+lbl(cur).split(" ")[0]+(f.pending>0.004?", including "+eur(f.pending)+" still to send from "+accName(f.main):"")+"."+(over?" Today’s extra is spread over the coming days, so tomorrow’s amount is a little lower.":"")}
+    $("dBarTxt").textContent=eur(spent)+" spent from "+nm+" this month, out of "+eur(dayMoney)+".";
   }else if(st==="future"){
-    $("dLbl").textContent="Planned allowance";$("dVal").textContent=eur(p.allowed/D)+" a day";
-    $("dSub").textContent="if "+lbl(cur)+" goes as planned ("+eur(p.allowed)+" for the month).";
-    $("dBarTxt").textContent=p.spent?eur(p.spent)+" already entered for this month.":"";
+    $("dLbl").textContent="Planned";$("dVal").textContent=eur(Math.max(0,leftMonth)/D)+" a day";
+    $("dSub").textContent="if you send "+eur(f.planned)+" to "+nm+" in "+lbl(cur)+".";$("dBarTxt").textContent="";
   }else{
-    var ok=p.spent<=p.allowed+0.004;
-    $("dLbl").textContent=ok?"You stayed within your plan":"You went over your plan";$("dVal").textContent=eur(p.spent/D)+" a day";cls=ok?"pos":"neg";
-    $("dSub").textContent="on average. You spent "+eur(p.spent)+" on day-to-day out of "+eur(p.allowed)+" planned.";
-    $("dBarTxt").textContent="";
+    $("dLbl").textContent="On average you spent";$("dVal").textContent=eur(spent/D)+" a day";cls="pos";
+    $("dSub").textContent="from "+nm+": "+eur(spent)+" in total.";$("dBarTxt").textContent="";
   }
   $("dVal").className="big2 "+cls;$("dVal").hidden=tiles;$("dTiles").hidden=!tiles;
-  $("dTrack").hidden=!showBar;
-  var pc=p.allowed>0?p.spent/p.allowed*100:(p.spent>0?100:0);
+  $("dTrack").hidden=!showBar||st==="future";
+  var pc=dayMoney>0?spent/dayMoney*100:(spent>0?100:0);
   $("dBar").style.width=Math.min(100,Math.max(0,pc))+"%";$("dBar").className="fill"+(pc>100?" over":"");
-  var w=[];
-  if(p.budTot>p.allowed+0.004&&p.allowed>=0&&st!=="past")w.push('<span class="neg">Your category budgets add up to '+eur(p.budTot)+', more than the '+eur(p.allowed)+' available. Lower some budgets to stay on track for your goals.</span>');
-  if(!hasGoals)w.push("Add a savings goal with a deadline in Savings and this allowance will show what you can spend each day while still reaching it.");
+  var w=[],budRoom=rd(dayMoney);
+  if(p.budTot>budRoom+0.004&&st!=="past")w.push('<span class="neg">Your category budgets add up to '+eur(p.budTot)+', more than the '+eur(budRoom)+' you have for '+esc(nm)+' this month.</span>');
+  w.push("Only expenses taken from "+esc(nm)+" count here. Expenses taken from "+esc(accName(f.main))+" lower what you can save instead.");
   $("dWarn").innerHTML=w.map(function(n){return"<p>"+n+"</p>"}).join("");
 }
+
+function renderMain(p,f){
+  var st=p.st,mn=accName(f.main),spn=f.sp?accName(f.sp):"your spending account",svn=f.sv?accName(f.sv):"your savings account";
+  $("mTitle").textContent=mn+" this month";
+  $("mSpendL").textContent="To send to "+spn+" in "+lbl(cur).split(" ")[0];
+  if(st==="past"){$("mLbl").textContent="You saved";$("mVal").textContent=eur(f.sentSv);$("mVal").className="big2 pos";$("mSub").textContent="sent to "+svn+" in "+lbl(cur)+"."}
+  else{var ok=f.toSave>=-0.004;$("mLbl").textContent=ok?"You can still save":mn+" is short";$("mVal").textContent=eur(Math.abs(f.toSave));$("mVal").className="big2 "+(ok?"pos":"neg");
+    $("mSub").textContent=ok?(f.toSave>0.004?"Send it to "+svn+" and "+mn+" will end the month at "+eur(f.cu)+" once every bill is paid.":"Everything is already where it should be."):(f.pending>0.004?"Send less to "+spn+(f.cu?" or lower your cushion":"")+".":(f.cu>=-f.toSave?"It comes out of your cushion: "+mn+" will end the month at "+eur(f.cu+f.toSave)+".":"Move money back from "+spn+" or "+svn+" to cover it."))}
+  var L=[[mn+" after this month’s bills",f.base,true]];
+  if(f.cu)L.push(["Cushion kept in "+mn,-f.cu]);
+  L.push(["For "+spn+(f.sentSp>0.004?" ("+eur(f.sentSp)+" sent)":""),-f.send]);
+  if(f.sentSv>0.004)L.push(["Already sent to "+svn,-f.sentSv]);
+  $("mCalc").innerHTML=L.map(function(l){return'<li><div class="t">'+esc(l[0])+'</div><div class="a">'+(l[2]?eur(l[1]):sg(l[1]))+'</div></li>'}).join("")+'<li class="tot"><div class="t">Still to save</div><div class="a">'+eur(f.toSave)+'</div></li>';
+  if(document.activeElement!==$("mSpend"))$("mSpend").value=f.set?S.toSpend[cur]:"";
+  $("mSpend").placeholder=String(f.sugg);
+  var parts=[];if(f.cu)parts.push("your "+eur(f.cu)+" cushion");if(p.gi.need>0.004)parts.push(eur(p.gi.need)+" for your goals");if(p.prov>0.004)parts.push(eur(p.prov)+" for bills that aren’t monthly");
+  $("mSugg").textContent="Suggested: "+eur(f.sugg)+(f.byBud?", based on your category budgets":parts.length?", the most you can send while keeping "+parts.join(", "):"")+"."+(f.spStart>0.004&&!f.byBud?" It counts the "+eur(f.spStart)+" already in "+spn+" from last month.":"")+(f.set?" Clear the box to use the suggestion.":" Leave the box empty to use it.")+(f.sentSp>f.planned+0.004?" You’ve already sent "+eur(f.sentSp)+", more than planned.":"");
+  var b="";
+  if(st!=="past"&&f.sp&&f.pending>0.004)b+='<button class="primary" data-send="sp">Send '+eur(f.pending)+' to '+esc(spn)+'</button>';
+  if(st!=="past"&&f.sv&&f.toSave>0.004)b+='<button class="'+(f.pending>0.004?"":"primary")+'" data-send="sv">Send '+eur(f.toSave)+' to '+esc(svn)+'</button>';
+  $("mBtns").innerHTML=b;$("mBtns").hidden=!b;
+  var n=[];
+  if(f.mainUnpaid>0.004&&st==="now")n.push(eur(f.mainUnpaid)+" of bills haven’t left "+esc(mn)+" yet. That money stays there until they arrive; it’s already taken into account.");
+  if(f.toSave>0.004&&p.gi.need>0.004)n.push(eur(p.gi.need)+" of it is what your goals need this month. Once it’s in "+esc(svn)+", share it between them in Savings.");
+  p.big.filter(function(r){return resolveIn(S,r.acc)===f.main}).forEach(function(r){n.push("Includes "+esc(r.label)+" ("+eur(r.amt)+", "+freq(r)+"). If "+esc(mn)+" is short, take what you set aside for it from "+esc(svn)+".")});
+  if(!f.sp||!f.sv)n.push("Choose your spending and savings accounts in More → How you use your accounts.");
+  $("mNotes").innerHTML=n.map(function(x){return"<p>"+x+"</p>"}).join("");
+}
+
+function renderAccTiles(p,f){
+  var bm=viewM(),t="";
+  if(f.sv){var tot=bal(S,f.sv,bm),as=assigned(f.sv,bm),fr=rd(tot-as);
+    t+='<div class="tile"><div class="k">Free money in '+esc(accName(f.sv))+'</div><div class="v '+(fr<-0.004?'neg':'pos')+'">'+eur(fr)+'</div><div class="s">'+eur(as)+' in goals · '+eur(tot)+' in total</div></div>'}
+  t+='<div class="tile"><div class="k">'+esc(accName(f.main))+(f.toSave<-0.004?' is short':' can still save')+'</div><div class="v '+(f.toSave<-0.004?'neg':'pos')+'">'+eur(Math.abs(f.toSave))+'</div><div class="s">in '+lbl(cur).split(" ")[0]+'</div></div>';
+  $("aTiles").innerHTML=t}
+
+function renderRoles(){
+  var main=mainId(S),opts='<option value="">None</option>'+openAccts().filter(function(a){return a.id!==main}).map(function(a){return'<option value="'+a.id+'">'+esc(a.name)+'</option>'}).join("");
+  $("setSp").innerHTML=opts;$("setSp").value=spendId()||"";$("setSv").innerHTML=opts;$("setSv").value=saveId()||"";
+  if(document.activeElement!==$("setCu"))$("setCu").value=S.settings.cushion||""}
 
 var editE=null,dateFor=null;
 function defDate(){return cur===tYM()?cur+"-"+pad(tDay()):cur+"-01"}
@@ -532,7 +612,7 @@ function renderGoals(p){
     else s=eur(g.price-i.saved)+" to go before you can afford it"+(x>1?", "+eur(i.target-i.saved)+" before your rule says go":"")+".";
     if(i.late)s+=' <span class="neg">The deadline has passed.</span>';
     else if(g.deadline&&i.need>0&&i.state!=="ready")s+=" Put aside "+eur(i.need)+" a month to be ready by "+lbl(g.deadline)+(i.moved>0.004?" ("+eur(i.moved)+" added this month).":".");
-    else if(!g.deadline&&i.state!=="ready")s+=" No deadline, so it isn’t taken out of your daily allowance.";
+    else if(!g.deadline&&i.state!=="ready")s+=" No deadline, so it isn’t part of the monthly plan.";
     if(i.toMove>0.004&&st!=="past"&&acc(g.acc))btns+='<button class="primary sm" data-gm="'+g.id+'">Add '+eur(i.toMove)+(g.acc!==main?" from Main":"")+'</button>';
     if(i.state==="ready")btns+='<button class="primary sm" data-gb="'+g.id+'">I bought it</button>';
     if(i.saved>0.004)btns+='<button class="ghost" data-gt="'+g.id+'">Take back</button>';
@@ -720,6 +800,17 @@ $("sGo").onclick=function(){
   parts.forEach(function(x){S.alloc.push(touch({id:uid(),goal:x.g.id,amt:x.amt,month:m}))});
   $("sMsg").textContent="Added "+eur(sum(parts,function(x){return x.amt}))+": "+parts.map(function(x){return x.g.name+" "+eur(x.amt)}).join(", ")+".";
   $("sAmt").value="";splitInputs().forEach(function(i){i.value=""});save();render()};
+
+/* ---------- monthly flow ---------- */
+$("mSpend").addEventListener("change",function(){var v=parseFloat(this.value);setMap("toSpend",cur,isNaN(v)||v<0?null:rd(v));save();render()});
+$("setSp").onchange=function(){setMap("settings","spendAcc",this.value||null);save();render()};
+$("setSv").onchange=function(){setMap("settings","saveAcc",this.value||null);save();render()};
+$("setCu").addEventListener("change",function(){var v=parseFloat(this.value);setMap("settings","cushion",isNaN(v)||v<=0?null:rd(v));save();render()});
+document.addEventListener("click",function(ev){var t=ev.target;if(!t.getAttribute)return;var k=t.getAttribute("data-send");if(!k)return;
+  twice(t,"send"+k,function(){var p=plan(cur),f=flow(cur,p),m=viewM();
+    if(k==="sp"&&f.pending>0.004){if(!f.set)setMap("toSpend",cur,f.planned);S.xfers.push(touch({id:uid(),from:f.main,to:f.sp,amt:f.pending,month:m}))}
+    else if(k==="sv"&&f.toSave>0.004)S.xfers.push(touch({id:uid(),from:f.main,to:f.sv,amt:f.toSave,month:m}));
+    save();render()})});
 
 /* ---------- budgets ---------- */
 $("bEdit").onclick=function(){editBud=!editBud;budSig="";render()};
