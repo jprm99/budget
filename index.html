@@ -238,6 +238,10 @@ li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
   <div class="row" style="justify-content:space-between;margin:8px 0"><b>Total</b><b id="aTot"></b></div>
   <p class="hint" id="aHint"></p>
   <p class="hint" id="aMsg" style="color:var(--ink)"></p>
+  <h2 style="margin-top:14px">Where each account’s money goes</h2>
+  <select id="aChartAcc" aria-label="Account to show" style="margin-bottom:6px"></select>
+  <p class="hint" id="aChartTxt" style="margin:0 0 10px"></p>
+  <div id="aChart"></div>
   <h2 style="margin-top:14px">Move money between accounts</h2>
   <div class="form r3"><select id="mFrom" aria-label="From account"></select><select id="mTo" aria-label="To account"></select><input id="mAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount"><button class="primary" id="mGo" style="grid-column:1/-1">Move money</button></div>
   <h2 id="xTitle" style="margin-top:14px">Transfers and corrections</h2>
@@ -370,8 +374,10 @@ function parts(d,id,upTo){var p={inc:0,exp:0,xin:0,xout:0,adj:0},main=mainId(d)=
 function bal(d,id,upTo){var p=parts(d,id,upTo);return rd(p.inc-p.exp+p.xin-p.xout+p.adj)}
 
 /* ---------- data format: fills gaps, upgrades older versions, cleans imported data ---------- */
+/* "Other" is the catch-all category, so it always stays at the end of the list. */
+function otherLast(cats){var i=cats.indexOf("Other");if(i>=0&&i!==cats.length-1){cats.splice(i,1);cats.push("Other")}return cats}
 function norm(d){var fresh=!(d&&d.expenses&&d.recurring);if(fresh)d={income:{},expenses:[],recurring:[]};
-  if(!d.income)d.income={};if(!d.cats||!d.cats.length)d.cats=CATS.slice();
+  if(!d.income)d.income={};if(!d.cats||!d.cats.length)d.cats=CATS.slice();otherLast(d.cats);
   if(!d.accounts||!d.accounts.length)d.accounts=[{id:"main",name:"Main account"},{id:"livret",name:"Livret A"},{id:"bourso",name:"Boursorama"}];
   if(!d.adj)d.adj=[];if(!d.xfers)d.xfers=[];
   if(!d.budgets)d.budgets={};if(!d.paid)d.paid={};if(!d.goals)d.goals=[];if(!d.del)d.del={};if(!d.ts)d.ts={};
@@ -419,7 +425,7 @@ function merge(a,b){
   /* A category is kept unless it was deleted (or renamed) after it was last added, whichever device did it. */
   var cats=[];n.cats.concat(o.cats).forEach(function(c){if(cats.indexOf(c)>=0)return;var t=Math.max(n.ts["cat:"+c]||0,o.ts["cat:"+c]||0);
     if(c==="Other"||!(del["cat:"+c]>=t)){cats.push(c);if(t)r.ts["cat:"+c]=t}});
-  r.cats=cats;
+  r.cats=otherLast(cats);
   if(a.since!==b.since){if(idx(o.since)>idx(r.since))r.since=o.since;filterOld(r,r.since)}
   return r}
 function canon(d){var c=Object.assign({},d);delete c.updated;return JSON.stringify(c)}
@@ -440,6 +446,28 @@ function incomeFor(m){if(S.income[m]!=null)return{v:+S.income[m]||0,inh:null};
   return best?{v:+S.income[best]||0,inh:best}:{v:0,inh:null}}
 function accountSummary(id,m){var p=parts(S,id,m),b=rd(p.inc-p.exp+p.xin-p.xout+p.adj),as=assigned(id,m);
   return{inc:p.inc,exp:p.exp,net:p.xin-p.xout,adj:p.adj,bal:b,assigned:as,free:rd(b-as)}}
+/* Money in an account today, not at the end of the month: last month's closing balance, plus this month's income,
+   transfers and corrections, minus the bills already paid and the expenses dated up to today.
+   "due" is what is still to leave the account this month (bills not paid yet, expenses dated later). */
+function balanceToday(id){
+  var m=thisMonth(),td=today(),due=0;
+  if(idx(m)<idx(S.since))return{now:bal(S,id,S.since),due:0};
+  var b=bal(S,id,shift(m,-1));
+  if(mainId()===id)b+=incomeOf(S,m);
+  S.recurring.forEach(function(r){if(!active(r,m)||resolveIn(S,r.acc)!==id)return;if(isPaid(r,m))b-=r.amt;else due+=r.amt});
+  S.expenses.forEach(function(e){if(e.month!==m||resolveIn(S,e.acc)!==id)return;if((e.day||1)<=td)b-=e.amt;else due+=e.amt});
+  S.xfers.forEach(function(x){if(x.month!==m)return;if(x.to===id)b+=x.amt;if(x.from===id)b-=x.amt});
+  S.adj.forEach(function(j){if(j.month===m&&j.acc===id)b+=j.amt});
+  return{now:rd(b),due:rd(due)}}
+/* What the money in a savings account is kept for at the end of month m: each goal's share, and the free rest.
+   Built only from goals that still exist and still hold money, so a goal that is bought (its share goes back to 0)
+   or deleted (its shares are removed) simply drops out. */
+function savingsBreakdown(id,m){var b=bal(S,id,m),as=assigned(id,m),rows=[];
+  S.goals.forEach(function(g,i){if(g.acc!==id)return;var s=gSaved(g.id,m);if(s>0.004)rows.push({goal:g.id,name:g.name,amt:s,order:i})});
+  rows.sort(function(x,y){return y.amt-x.amt});
+  return{bal:b,assigned:as,free:rd(b-as),rows:rows}}
+/* "savings" for the savings account or any other account holding goal money; "spending" otherwise. */
+function accountKind(id,m){if(id===saveId())return"savings";if(id===mainId()||id===spendId())return"spending";return assigned(id,m)>0.004?"savings":"spending"}
 function spendId(){var v=S.settings.spendAcc,a=acc(v);if(a&&!a.closed&&v!==mainId())return v;var b=openAccts().filter(function(x){return /bourso/i.test(x.name)})[0];return b?b.id:null}
 function saveId(){var v=S.settings.saveAcc,a=acc(v);if(a&&!a.closed&&v!==mainId())return v;var b=openAccts().filter(function(x){return /livret|saving|épargne/i.test(x.name)})[0];return b?b.id:null}
 /* Where a new goal's money goes and where transfers go by default. */
@@ -689,7 +717,7 @@ var cmd={
 
   addCategory:function(name){var n=String(name||"").trim();if(!n)return{error:"empty"};
     if(S.cats.some(function(c){return c.toLowerCase()===n.toLowerCase()}))return{error:"exists"};
-    S.cats.push(n);delete S.del["cat:"+n];S.ts["cat:"+n]=nowMs();commit();return{ok:true}},
+    S.cats.push(n);otherLast(S.cats);delete S.del["cat:"+n];S.ts["cat:"+n]=nowMs();commit();return{ok:true}},
   /* Renaming updates past expenses, bills, goals and the budget. */
   renameCategory:function(i,name){var old=S.cats[i],n=String(name||"").trim();
     if(old==null||!n||n===old||S.cats.some(function(c,j){return j!==i&&c.toLowerCase()===n.toLowerCase()}))return{error:"invalid"};
@@ -735,7 +763,7 @@ return{
   active:active,lastMonth:lastMonth,billEditSplits:billEditSplits,nextDue:nextDue,dueDay:dueDay,isPaid:isPaid,
   /* accounts */
   mainId:function(){return mainId()},acc:acc,openAccts:openAccts,shownAccts:shownAccts,accName:accName,anm:anm,
-  balance:function(id,m){return bal(S,id,m)},accountSummary:accountSummary,spendId:spendId,saveId:saveId,defaultSaveAcc:defaultSaveAcc,cushion:cushion,incomeFor:incomeFor,
+  balance:function(id,m){return bal(S,id,m)},accountSummary:accountSummary,balanceToday:balanceToday,savingsBreakdown:savingsBreakdown,accountKind:accountKind,spendId:spendId,saveId:saveId,defaultSaveAcc:defaultSaveAcc,cushion:cushion,incomeFor:incomeFor,
   sameAccount:function(a,b){return resolveIn(S,a)===b},
   /* goals */
   rule:rule,goal:goal,multOf:multOf,activeGoals:activeGoals,doneGoals:doneGoals,goalFundable:goalFundable,
@@ -757,7 +785,7 @@ if(typeof module!=="undefined")module.exports=createBudgetCore;
 </script>
 <script id="budget-app">
 (function(){
-var VERSION="4.0",KEY="budget-v1";
+var VERSION="4.1",KEY="budget-v1";
 function $(i){return document.getElementById(i)}
 
 /* =====================================================================================
@@ -993,11 +1021,14 @@ function renderMain(p,f){
   $("mNotes").innerHTML=paras(n);
 }
 
+/* Accounts tab: what is in the accounts right now (Home shows what is left to save). */
 function renderAccTiles(f){
-  var bm=core.ledgerMonth(cur),t="";
-  if(f.sv){var a=core.accountSummary(f.sv,bm);
-    t+='<div class="tile"><div class="k">Free money in '+esc(core.accName(f.sv))+'</div><div class="v '+(a.free<-0.004?'neg':'pos')+'">'+eur(a.free)+'</div><div class="s">'+eur(a.assigned)+' in goals · '+eur(a.bal)+' in total</div></div>'}
-  t+='<div class="tile"><div class="k">'+esc(core.accName(f.main))+(f.toSave<-0.004?' is short':' can still save')+'</div><div class="v '+(f.toSave<-0.004?'neg':'pos')+'">'+eur(Math.abs(f.toSave))+'</div><div class="s">in '+monthName(cur)+'</div></div>';
+  var t="",td=dayLbl(core.thisMonth(),core.today());
+  function tile(k,v,s,full){return'<div class="tile"'+(full?' style="grid-column:1/-1"':'')+'><div class="k">'+k+'</div><div class="v '+(v<-0.004?'neg':'pos')+'">'+eur(v)+'</div><div class="s">'+s+'</div></div>'}
+  function today(id){var b=core.balanceToday(id);return tile("In "+esc(core.accName(id))+" today",b.now,td+(b.due>0.004?" · "+eur(b.due)+" still to leave this month":" · nothing else due this month"))}
+  t+=today(f.main);
+  if(f.sp)t+=today(f.sp);
+  if(f.sv){var a=core.accountSummary(f.sv,core.ledgerMonth(cur));t+=tile("Free money in "+esc(core.accName(f.sv)),a.free,eur(a.assigned)+" in goals · "+eur(a.bal)+" in total, end of "+monthName(core.ledgerMonth(cur)),!!f.sp)}
   $("aTiles").innerHTML=t}
 
 function renderRoles(){
@@ -1091,7 +1122,7 @@ function fillDacc(){var sel=$("dAcc"),v=sel.value||"all";sel.innerHTML='<option 
 
 /* ---------- accounts card ---------- */
 var aSig="";
-function renderAccounts(){fillSelects();fillCats();fillDacc();renderDonut();renderCatMgr();updPurge();
+function renderAccounts(){fillSelects();fillCats();fillDacc();renderDonut();renderAccChart();renderCatMgr();updPurge();
   var D=S(),bm=core.ledgerMonth(cur),tot=0,list=core.shownAccts(bm),main=core.mainId(),sig=list.map(function(a){return a.id+(a.closed?"c":"")}).join("|");
   $("aTitle").textContent="Accounts at the end of "+lbl(bm);
   $("aHint").textContent=(bm!==cur?"Balances are tracked from "+lbl(D.since)+", so this shows that month. ":"")+"Balances come from your income (paid into the Main account), expenses and transfers. To correct one, for example after taking money out of your Livret A, type the real amount: the difference is saved as a correction. Removing an account that has history closes it: its balance moves to Main and past months stay correct.";
@@ -1114,17 +1145,33 @@ function renderAccounts(){fillSelects();fillCats();fillDacc();renderDonut();rend
 
 /* ---------- donut ---------- */
 var PAL=["#0e6d70","#e07a2f","#7a5cc4","#c9a227","#d6457a","#3f8f3f","#2e86c1","#8d6e63","#7f8c8d","#b05cc4"];
+/* rows: [{label, amt, color}] with positive amounts. */
+function donut(rows,total,aria){
+  var R=70,C=2*Math.PI*R,off=0,circles="",leg="",sumR=sum(rows,function(r){return r.amt});
+  rows.forEach(function(row){var frac=row.amt/sumR,len=frac*C,draw=rows.length>1?Math.max(0,len-1.5):len;
+    circles+='<circle cx="100" cy="100" r="'+R+'" fill="none" stroke="'+row.color+'" stroke-width="28" stroke-dasharray="'+draw+' '+(C-draw)+'" stroke-dashoffset="'+(-off)+'"/>';off+=len;
+    leg+='<li><span class="sw" style="background:'+row.color+'"></span><div class="t">'+esc(row.label)+'</div><div class="a">'+eur(row.amt)+'</div><div class="pc">'+Math.round(frac*100)+'%</div></li>'});
+  return'<div class="donut"><svg viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="'+esc(aria)+'" style="flex:none"><g transform="rotate(-90 100 100)">'+circles+'</g><text x="100" y="96" text-anchor="middle" style="fill:var(--mute)" font-size="12">Total</text><text x="100" y="118" text-anchor="middle" style="fill:var(--ink)" font-size="18" font-weight="700">'+eur(total)+'</text></svg><ul class="leg">'+leg+'</ul></div>'}
+function catRows(data){var cats=S().cats;return data.rows.map(function(r,j){var ci=cats.indexOf(r.cat);return{label:r.cat,amt:r.amt,color:PAL[(ci>=0?ci:cats.length+j)%PAL.length]}})}
 function renderDonut(){
-  var data=core.spendingByCategory(cur,$("dAcc").value||"all"),cats=S().cats;
-  if(!data.rows.length){$("dChart").innerHTML='<div class="empty">No expenses for this account in '+esc(lbl(cur))+'.</div>';return}
-  var R=70,C=2*Math.PI*R,off=0,circles="",leg="";
-  data.rows.forEach(function(row,j){
-    var ci=cats.indexOf(row.cat),col=PAL[(ci>=0?ci:cats.length+j)%PAL.length],len=row.frac*C;
-    var draw=data.rows.length>1?Math.max(0,len-1.5):len;
-    circles+='<circle cx="100" cy="100" r="'+R+'" fill="none" stroke="'+col+'" stroke-width="28" stroke-dasharray="'+draw+' '+(C-draw)+'" stroke-dashoffset="'+(-off)+'"/>';
-    off+=len;
-    leg+='<li><span class="sw" style="background:'+col+'"></span><div class="t">'+esc(row.cat)+'</div><div class="a">'+eur(row.amt)+'</div><div class="pc">'+Math.round(row.frac*100)+'%</div></li>'});
-  $("dChart").innerHTML='<div class="donut"><svg viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Spending by category" style="flex:none"><g transform="rotate(-90 100 100)">'+circles+'</g><text x="100" y="96" text-anchor="middle" style="fill:var(--mute)" font-size="12">Total</text><text x="100" y="118" text-anchor="middle" style="fill:var(--ink)" font-size="18" font-weight="700">'+eur(data.total)+'</text></svg><ul class="leg">'+leg+'</ul></div>'}
+  var data=core.spendingByCategory(cur,$("dAcc").value||"all");
+  $("dChart").innerHTML=data.rows.length?donut(catRows(data),data.total,"Spending by category"):'<div class="empty">No expenses for this account in '+esc(lbl(cur))+'.</div>'}
+/* Accounts tab chart: expenses by category, or for a savings account what its money is kept for (goals + free money). */
+var GPAL=PAL.filter(function(c){return c!=="#7f8c8d"}),FREE="#7f8c8d";
+function renderAccChart(){
+  var sel=$("aChartAcc"),bm=core.ledgerMonth(cur),list=core.shownAccts(bm),v=sel.value;
+  sel.innerHTML=list.map(function(a){return'<option value="'+a.id+'">'+esc(a.name)+'</option>'}).join("");
+  sel.value=list.some(function(a){return a.id===v})?v:core.mainId();
+  var id=sel.value,nm=core.accName(id);
+  if(core.accountKind(id,bm)==="savings"){
+    var b=core.savingsBreakdown(id,bm),rows=b.rows.map(function(r){return{label:r.name,amt:r.amt,color:GPAL[r.order%GPAL.length]}});
+    if(b.free>0.004)rows.push({label:"Free money",amt:b.free,color:FREE});
+    $("aChartTxt").textContent="What the money in "+nm+" is kept for, at the end of "+lbl(bm)+". Goals you’ve bought or deleted no longer appear.";
+    $("aChart").innerHTML=(rows.length?donut(rows,b.bal,"Savings in "+nm):'<div class="empty">Nothing saved in '+esc(nm)+' yet.</div>')
+      +(b.free<-0.004?'<p class="hint neg">'+eur(-b.free)+' is missing: the goals hold more than what’s in '+esc(nm)+'. Take money back from a goal in Savings.</p>':'')}
+  else{var d=core.spendingByCategory(cur,id);
+    $("aChartTxt").textContent="Bills and expenses taken from "+nm+" in "+lbl(cur)+", by category.";
+    $("aChart").innerHTML=d.rows.length?donut(catRows(d),d.total,"Expenses from "+nm):'<div class="empty">No expenses from '+esc(nm)+' in '+esc(lbl(cur))+'.</div>'}}
 
 /* ---------- categories ---------- */
 function renderCatMgr(){
@@ -1251,6 +1298,7 @@ $("mGo").onclick=function(){if(core.cmd.moveMoney($("mFrom").value,$("mTo").valu
 $("aAdd").onclick=function(){var n=$("aName").value,b=num($("aBal").value);if(!n.trim()){$("aName").focus();return}
   $("aName").value="";$("aBal").value="";core.cmd.addAccount(n,b,cur)};
 $("dAcc").onchange=renderDonut;
+$("aChartAcc").onchange=renderAccChart;
 $("cAdd").onclick=addCat;
 $("cNew").addEventListener("keydown",function(e){if(e.key==="Enter")addCat()});
 
