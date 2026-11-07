@@ -98,7 +98,7 @@ li input.num{width:120px;flex:none}
 .donut li{padding:6px 0;gap:8px}
 .sw{width:12px;height:12px;border-radius:3px;flex:none}
 .donut .pc{color:var(--mute);font-size:13px;width:38px;text-align:right}
-li.acct{flex-wrap:wrap}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
+li.acct{flex-wrap:wrap}.bf{flex-basis:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px}.bf label{font-size:12px;color:var(--mute);display:block;margin-bottom:2px}.bd{flex-basis:100%;font-size:13px;color:var(--mute)}
 </style>
 </head>
 <body>
@@ -697,6 +697,11 @@ var cmd={
   setBalance:function(id,m,val){var lm=ledgerMonth(m);if(!acc(id)||val==null||isNaN(val))return{error:"invalid"};
     var diff=rd(val-bal(S,id,lm));if(Math.abs(diff)<0.005)return{ok:true,changed:false};
     S.adj.push(touch({id:uid(),acc:id,month:lm,amt:diff,note:"Balance set by hand"}));commit();return{ok:true,changed:true}},
+  /* Typing what the bank shows today saves the difference with the app's "today" balance as a correction,
+     dated this month, so the end-of-month balance moves by the same amount. */
+  setBalanceToday:function(id,val){if(!acc(id)||acc(id).closed||val==null||isNaN(val))return{error:"invalid"};
+    var diff=rd(val-balanceToday(id).now);if(Math.abs(diff)<0.005)return{ok:true,changed:false,diff:0};
+    S.adj.push(touch({id:uid(),acc:id,month:ledgerMonth(thisMonth()),amt:diff,note:"Matched to the bank balance"}));commit();return{ok:true,changed:true,diff:diff}},
   addAccount:function(name,b,m){var n=String(name||"").trim();if(!n)return{error:"name"};
     var id=uid();S.accounts.push(touch({id:id,name:n}));
     if(b!=null&&!isNaN(b)&&b!==0)S.adj.push(touch({id:uid(),acc:id,month:ledgerMonth(m),amt:rd(b),note:"Starting balance"}));
@@ -785,7 +790,7 @@ if(typeof module!=="undefined")module.exports=createBudgetCore;
 </script>
 <script id="budget-app">
 (function(){
-var VERSION="4.1",KEY="budget-v1";
+var VERSION="4.2",KEY="budget-v1";
 function $(i){return document.getElementById(i)}
 
 /* =====================================================================================
@@ -1125,12 +1130,17 @@ var aSig="";
 function renderAccounts(){fillSelects();fillCats();fillDacc();renderDonut();renderAccChart();renderCatMgr();updPurge();
   var D=S(),bm=core.ledgerMonth(cur),tot=0,list=core.shownAccts(bm),main=core.mainId(),sig=list.map(function(a){return a.id+(a.closed?"c":"")}).join("|");
   $("aTitle").textContent="Accounts at the end of "+lbl(bm);
-  $("aHint").textContent=(bm!==cur?"Balances are tracked from "+lbl(D.since)+", so this shows that month. ":"")+"Balances come from your income (paid into the Main account), expenses and transfers. To correct one, for example after taking money out of your Livret A, type the real amount: the difference is saved as a correction. Removing an account that has history closes it: its balance moves to Main and past months stay correct.";
-  if(sig!==aSig){aSig=sig;$("aList").innerHTML=list.map(function(a){return'<li class="acct"><div class="t"><input data-ai="'+a.id+'" data-f="name" value="'+esc(a.name)+'" aria-label="Account name"></div><input class="num" data-ai="'+a.id+'" data-f="bal" type="number" step="0.01" inputmode="decimal" aria-label="Balance"'+(a.closed?" disabled":"")+'><button class="ghost" data-ad="'+a.id+'" aria-label="Remove account"'+(a.id===main||a.closed?' hidden':'')+'>✕</button><div class="bd" data-bd="'+a.id+'"></div></li>'}).join("")}
+  $("aHint").textContent=(bm!==cur?"Balances are tracked from "+lbl(D.since)+", so this shows that month. ":"")+"Balances come from your income (paid into the Main account), expenses and transfers. If an account doesn’t match your bank, type what the bank shows in “In the bank today”: the difference is saved as a correction. “In the bank today” counts the bills paid so far and the expenses dated up to today. Removing an account that has history closes it: its balance moves to Main and past months stay correct.";
+  sig+="|"+bm;
+  if(sig!==aSig){aSig=sig;$("aList").innerHTML=list.map(function(a){return'<li class="acct"><div class="t"><input data-ai="'+a.id+'" data-f="name" value="'+esc(a.name)+'" aria-label="Account name"></div><button class="ghost" data-ad="'+a.id+'" aria-label="Remove account"'+(a.id===main||a.closed?' hidden':'')+'>✕</button>'
+    +'<div class="bf"><div><label for="ab-'+a.id+'">End of '+esc(monthName(bm))+'</label><input class="num" id="ab-'+a.id+'" data-ai="'+a.id+'" data-f="bal" type="number" step="0.01" inputmode="decimal" style="width:100%"'+(a.closed?" disabled":"")+'></div>'
+    +(a.closed?'':'<div><label for="at-'+a.id+'">In the bank today</label><input class="num" id="at-'+a.id+'" data-ai="'+a.id+'" data-f="today" type="number" step="0.01" inputmode="decimal" style="width:100%"></div>')+'</div>'
+    +'<div class="bd" data-bd="'+a.id+'"></div></li>'}).join("")}
   list.forEach(function(a){
     var s=core.accountSummary(a.id,bm),pc=[];tot+=s.bal;
     var inp=document.querySelector('[data-ai="'+a.id+'"][data-f="bal"]'),bd=document.querySelector('[data-bd="'+a.id+'"]');
     if(inp&&document.activeElement!==inp)inp.value=s.bal.toFixed(2);
+    var ti=document.querySelector('[data-ai="'+a.id+'"][data-f="today"]');if(ti&&document.activeElement!==ti)ti.value=core.balanceToday(a.id).now.toFixed(2);
     if(a.closed)pc.push("Closed after "+lbl(a.closed,true));
     if(s.inc)pc.push("Income "+sg(s.inc));if(s.exp)pc.push("Expenses "+sg(-s.exp));if(Math.abs(s.net)>0.004)pc.push("Transfers "+sg(s.net));if(Math.abs(s.adj)>0.004)pc.push("Corrections "+sg(s.adj));
     if(Math.abs(s.assigned)>0.004)pc.push("In goals "+eur(s.assigned)+", free "+eur(s.bal-s.assigned));
@@ -1290,6 +1300,8 @@ document.addEventListener("change",function(ev){
   var id=t.getAttribute("data-ai"),bc=t.getAttribute("data-bud"),ci=t.getAttribute("data-ci");
   if(id){if(!core.acc(id))return;
     if(t.getAttribute("data-f")==="name"){core.cmd.renameAccount(id,t.value);return}
+    if(t.getAttribute("data-f")==="today"){var bt=core.cmd.setBalanceToday(id,num(t.value));
+      $("aMsg").textContent=bt.changed?core.accName(id)+" now matches your bank: a correction of "+sg(bt.diff)+" was saved.":"";render();return}
     core.cmd.setBalance(id,cur,num(t.value));render();t.value=core.balance(id,core.ledgerMonth(cur)).toFixed(2);return}
   if(bc!=null){core.cmd.setBudget(bc,num(t.value));return}
   if(ci!=null){if(core.cmd.renameCategory(+ci,t.value).error)t.value=S().cats[+ci]}
